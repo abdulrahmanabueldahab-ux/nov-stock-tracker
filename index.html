@@ -91,10 +91,10 @@
   .st-dl-link:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
   .st-dl-msg { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   .st-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-  .st-kpis { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr)); }
-  .st-kpi { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md) var(--cds-pad-lg); display: grid; gap: var(--cds-gap-xs); align-content: start; }
+  .st-kpis { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); }
+  .st-kpi { min-width: 0; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md) var(--cds-pad-md); display: grid; gap: var(--cds-gap-xs); align-content: start; }
   .st-kpi-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-  .st-kpi-value { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.1; }
+  .st-kpi-value { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: clamp(1.15rem, 1.6vw, var(--cds-font-size-title)); line-height: 1.15; white-space: nowrap; }
   .st-kpi-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   .st-kpi.is-bad .st-kpi-value { color: var(--color-bad); }
   .st-kpi.is-warn .st-kpi-value { color: var(--color-warn); }
@@ -186,7 +186,8 @@
   <section class="st-kpis" id="kpis" aria-label="Headline figures">
     <div class="st-kpi" id="kpi-target"><span class="st-kpi-label">Nov target</span><span class="st-kpi-value" data-draw="kpi" data-metric="target">—</span><span class="st-kpi-note st-all-only">Full month</span><span class="st-kpi-note st-ch-only" hidden>Full month, selected channel</span></div>
     <div class="st-kpi" id="kpi-sales"><span class="st-kpi-label">Nov sales to date</span><span class="st-kpi-value" data-draw="kpi" data-metric="sales">—</span><span class="st-kpi-note">Achievement <span data-draw="kpi-ach">—</span></span><span class="st-kpi-note st-ch-only" hidden>Selected channel</span></div>
-    <div class="st-kpi" id="kpi-avail"><span class="st-kpi-label">Available stock</span><span class="st-kpi-value" data-draw="kpi" data-metric="avail">—</span><span class="st-kpi-note">Opening + Nov releases − Nov sales − blocked (<span data-draw="kpi-blocked">—</span>)</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
+    <div class="st-kpi" id="kpi-avail"><span class="st-kpi-label">Available stock</span><span class="st-kpi-value" data-draw="kpi" data-metric="avail">—</span><span class="st-kpi-note">Opening + Nov releases − Nov sales − blocked stock</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
+    <div class="st-kpi" id="kpi-blocked"><span class="st-kpi-label">Blocked stock</span><span class="st-kpi-value" data-draw="kpi" data-metric="blocked">—</span><span class="st-kpi-note">Awaiting pickup, not available for sale</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
     <div class="st-kpi is-bad" id="kpi-gap"><span class="st-kpi-label">Gap (shortage only)</span><span class="st-kpi-value" data-draw="kpi" data-metric="gap">—</span><span class="st-kpi-note">Short SKUs only, no offset</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
     <div class="st-kpi is-warn" id="kpi-excess"><span class="st-kpi-label">Excess above target</span><span class="st-kpi-value" data-draw="kpi" data-metric="excess">—</span><span class="st-kpi-note">Stock to push</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
     <div class="st-kpi" id="kpi-net"><span class="st-kpi-label">Net gap</span><span class="st-kpi-value" data-draw="kpi" data-metric="net">—</span><span class="st-kpi-note">Gap + excess</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
@@ -217,7 +218,7 @@
           <th data-field="n_focus">Focus</th>
           <th class="c-sar b-bptt" data-field="target_bptt">Target</th><th class="c-sar b-cif" data-field="target_cif">Target</th><th class="c-sar b-dplc" data-field="target_dplc">Target</th><th class="c-uos" data-field="target_uos">Target</th><th class="c-ton" data-field="target_ton">Target</th>
           <th class="c-sar b-bptt" data-field="sales_bptt">Sales</th><th class="c-sar b-cif" data-field="sales_cif">Sales</th><th class="c-sar b-dplc" data-field="sales_dplc">Sales</th><th class="c-uos" data-field="sales_uos">Sales</th><th class="c-ton" data-field="sales_ton">Sales</th>
-          <th class="c-sar b-bptt" data-field="avail_bptt">Available</th><th class="c-sar b-cif" data-field="avail_cif">Available</th><th class="c-sar b-dplc" data-field="avail_dplc">Available</th><th class="c-uos" data-field="avail_uos">Available</th><th class="c-ton" data-field="avail_ton">Available</th>
+          <th class="c-sar b-bptt" data-field="avail_bptt">Available</th><th class="c-sar b-cif" data-field="avail_cif">Available</th><th class="c-sar b-dplc" data-field="avail_dplc">Available</th><th class="c-uos" data-field="avail_uos">Available</th><th class="c-ton" data-field="avail_ton">Available</th><th class="c-sar b-bptt" data-field="blocked_bptt">Blocked</th><th class="c-sar b-cif" data-field="blocked_cif">Blocked</th><th class="c-sar b-dplc" data-field="blocked_dplc">Blocked</th><th class="c-uos" data-field="blocked_uos">Blocked</th><th class="c-ton" data-field="blocked_ton">Blocked</th>
           <th class="c-sar b-bptt" data-field="gap_bptt">Gap</th><th class="c-sar b-cif" data-field="gap_cif">Gap</th><th class="c-sar b-dplc" data-field="gap_dplc">Gap</th><th class="c-uos" data-field="gap_uos">Gap</th><th class="c-ton" data-field="gap_ton">Gap</th>
           <th class="c-sar b-bptt" data-field="excess_bptt">Excess</th><th class="c-sar b-cif" data-field="excess_cif">Excess</th><th class="c-sar b-dplc" data-field="excess_dplc">Excess</th><th class="c-uos" data-field="excess_uos">Excess</th><th class="c-ton" data-field="excess_ton">Excess</th>
           <th class="c-sar b-bptt" data-field="net_bptt">Net gap</th><th class="c-sar b-cif" data-field="net_cif">Net gap</th><th class="c-sar b-dplc" data-field="net_dplc">Net gap</th><th class="c-uos" data-field="net_uos">Net gap</th><th class="c-ton" data-field="net_ton">Net gap</th>
@@ -515,11 +516,6 @@
     el.textContent = r ? d3.format('.1%')(r.achievement) : '—';
   });
 
-  dash.draw('kpi-blocked', (el) => {
-    const r = totalsRow(), f = 'blocked_' + sfx();
-    setMark(el, f);
-    el.textContent = r ? fmtUnit(r[f], unitOf(), true) : '—';
-  });
   dash.draw('kpi', (el) => {
     const m = el.dataset.metric, f = m + '_' + sfx(), pick = chPick();
     if (pick && m === 'target') {
@@ -576,7 +572,7 @@
     t.data.forEach((r) => {
       const tr = document.createElement('tr');
       cell(tr, r.brand); cell(tr, fmtNum(r.skus)); cell(tr, fmtNum(r.n_short)); cell(tr, fmtNum(r.n_focus));
-      ['target', 'sales', 'avail', 'gap', 'excess', 'net'].forEach((m) => {
+      ['target', 'sales', 'avail', 'blocked', 'gap', 'excess', 'net'].forEach((m) => {
         ['bptt', 'cif', 'dplc', 'uos', 'ton'].forEach((u) => {
           const x = r[m + '_' + u];
           cell(tr, u === 'ton' ? d3.format(',.1f')(x) : fmtNum(x), (u === 'uos' || u === 'ton' ? 'c-' + u : 'c-sar b-' + u) + (m === 'gap' && x < -0.5 ? ' st-neg' : m === 'excess' && x > 0.5 ? ' st-pos' : ''));
