@@ -84,7 +84,7 @@
   .st-seg button { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); background: var(--color-panel); color: var(--color-fg-muted); border: 0; cursor: pointer; }
   .st-seg button[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); }
   .st-seg button:focus-visible, .st-th:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
-  .st-dl { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-md); border: 1px solid var(--color-fg); border-radius: var(--cds-radius); background: var(--color-fg); color: var(--color-bg); cursor: pointer; margin-inline-start: auto; }
+  .st-dl { text-decoration: none; display: inline-block; font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-md); border: 1px solid var(--color-fg); border-radius: var(--cds-radius); background: var(--color-fg); color: var(--color-bg); cursor: pointer; margin-inline-start: auto; }
   .st-dl:disabled { opacity: .5; cursor: progress; }
   .st-dl:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
   .st-dl-link { font-size: var(--cds-font-size-caption); color: var(--color-fg); text-decoration: underline; text-underline-offset: 2px; padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
@@ -181,13 +181,7 @@
       <option value="Farm">Farm</option>
       <option value="Oth MT">Oth MT</option>
     </select>
-    <button type="button" id="st-download" class="st-dl" aria-label="Download Excel workbook">Download Excel</button>
-    <a id="st-drive" class="st-dl-link" href="https://drive.google.com/uc?export=download&amp;id=1VmMOt2BgRtkIIuo4nD3wrmoUo3jOmJ3e" target="_blank" rel="noopener">Excel from Google Drive</a>
-    <span class="st-dl-msg st-dl-saved" hidden>Excel file saved.</span>
-    <span class="st-dl-msg st-dl-declined" hidden>Download cancelled.</span>
-    <span class="st-dl-msg st-dl-direct" hidden>Your download should start now.</span>
-    <span class="st-dl-msg st-dl-none" hidden>Excel download isn’t available in this view.</span>
-    <span class="st-dl-msg st-dl-error" hidden>The Excel file couldn’t be created. Try again.</span>
+    <a id="st-download" class="st-dl" href="https://abdulrahmanabueldahab-ux.github.io/nov-stock-tracker/Nov_Stock_Tracker.xlsx?v=20261108-1" target="_blank" rel="noopener" download="Nov_Stock_Tracker.xlsx">Download Excel (pivot)</a>
   </div>
 
   <section class="st-kpis" id="kpis" aria-label="Headline figures">
@@ -662,121 +656,6 @@
       el.append(tr);
     });
   });
-  // ---- Excel export: builds a real .xlsx (zip of SpreadsheetML) from the loaded data ----
-  (() => {
-    const crcTable = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
-    const crc32 = (b) => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = crcTable[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
-    const enc = new TextEncoder();
-    const zip = (files) => {
-      const parts = [], central = []; let offset = 0;
-      const d = new Date(), time = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), date = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
-      files.forEach(([name, text]) => {
-        const nb = enc.encode(name), db = enc.encode(text), crc = crc32(db);
-        const h = new DataView(new ArrayBuffer(30));
-        h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
-        h.setUint16(10, time, true); h.setUint16(12, date, true); h.setUint32(14, crc, true); h.setUint32(18, db.length, true); h.setUint32(22, db.length, true);
-        h.setUint16(26, nb.length, true); h.setUint16(28, 0, true);
-        parts.push(new Uint8Array(h.buffer), nb, db);
-        const c = new DataView(new ArrayBuffer(46));
-        c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true);
-        c.setUint16(12, time, true); c.setUint16(14, date, true); c.setUint32(16, crc, true); c.setUint32(20, db.length, true); c.setUint32(24, db.length, true);
-        c.setUint16(28, nb.length, true); c.setUint32(42, offset, true);
-        central.push(new Uint8Array(c.buffer), nb);
-        offset += 30 + nb.length + db.length;
-      });
-      const cdSize = central.reduce((a, p) => a + p.length, 0);
-      const e = new DataView(new ArrayBuffer(22));
-      e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, cdSize, true); e.setUint32(16, offset, true);
-      return new Blob([...parts, ...central, new Uint8Array(e.buffer)]);
-    };
-    const esc = (s) => String(s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    const col = (i) => { let s = ''; i++; while (i) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; };
-    // cols: [{h, k, f}] f: 'n' number #,##0, 'p' percent, 't' text
-    const sheet = (cols, rows) => {
-      const cell = (r, c, v, style, f) => {
-        const ref = col(c) + (r + 1);
-        if (v == null || v === '') return '';
-        if (f === 't' || typeof v === 'string') return `<c r="${ref}" t="inlineStr" s="${style}"><is><t xml:space="preserve">${esc(v)}</t></is></c>`;
-        return `<c r="${ref}" s="${style}"><v>${Number.isFinite(v) ? v : 0}</v></c>`;
-      };
-      const head = `<row r="1">${cols.map((c, i) => cell(0, i, c.h, 1, 't')).join('')}</row>`;
-      const body = rows.map((r, ri) => `<row r="${ri + 2}">${cols.map((c, i) => cell(ri + 1, i, typeof c.k === 'function' ? c.k(r) : r[c.k], c.f === 'n' ? (/_ton$|^cpt$|^price_/.test(c.k) ? 4 : 2) : c.f === 'p' ? 3 : 0, c.f)).join('')}</row>`).join('');
-      const widths = cols.map((c, i) => `<col min="${i + 1}" max="${i + 1}" width="${c.w || 14}" customWidth="1"/>`).join('');
-      return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>${widths}</cols><sheetData>${head}${body}</sheetData><autoFilter ref="A1:${col(cols.length - 1)}${rows.length + 1}"/></worksheet>`;
-    };
-    const workbook = (sheets) => {
-      const files = [
-        ['[Content_Types].xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${sheets.map((s, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}</Types>`],
-        ['_rels/.rels', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`],
-        ['xl/workbook.xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${sheets.map((s, i) => `<sheet name="${esc(s.name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets>${sheets.map((s, i) => `<definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="${i}" hidden="1">'${esc(s.name)}'!$A$1:$${col(s.cols.length - 1)}$${s.rows.length + 1}</definedName></definedNames>`).slice(0, 0).join('')}</workbook>`],
-        ['xl/_rels/workbook.xml.rels', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((s, i) => `<Relationship Id="rId${i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join('')}<Relationship Id="rId${sheets.length + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`],
-        ['xl/styles.xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="164" formatCode="#,##0.0"/></numFmts><fonts count="2"><font><sz val="10"/><name val="Arial"/></font><font><b/><sz val="10"/><color rgb="FFFFFFFF"/><name val="Arial"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF1F4E78"/></patternFill></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="5"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="3" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="9" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`],
-      ];
-      sheets.forEach((s, i) => files.push([`xl/worksheets/sheet${i + 1}.xml`, sheet(s.cols, s.rows)]));
-      return zip(files);
-    };
-    const skuCols = [
-      { h: 'SKU (target description)', k: 'sku', f: 't', w: 44 }, { h: 'Stock SKU', k: 'stock_sku', f: 't', w: 44 }, { h: 'Brand', k: 'brand', f: 't', w: 12 }, { h: 'Status', k: 'status', f: 't', w: 16 },
-      { h: 'Nov Opening SOH (UOS)', k: 'nov_opening', f: 'n' }, { h: 'Nov Released (UOS)', k: 'nov_released', f: 'n' }, { h: 'Nov Sales MTD (UOS)', k: 'nov_sales', f: 'n' },
-      { h: 'Available Stock (UOS)', k: 'available', f: 'n' }, { h: 'Nov Target (UOS)', k: 'nov_target', f: 'n' }, { h: 'Remaining Target (UOS)', k: 'remaining_target', f: 'n' },
-      { h: 'Gap - shortage only (UOS)', k: 'gap', f: 'n' }, { h: 'Excess (UOS)', k: 'excess', f: 'n' }, { h: 'Net Gap (UOS)', k: 'net', f: 'n' }, { h: 'Cover %', k: 'cover', f: 'p' },
-      { h: 'Cases per ton (CPT)', k: 'cpt', f: 'n' }, { h: 'Available (Tons)', k: 'avail_ton', f: 'n' }, { h: 'Target (Tons)', k: 'target_ton', f: 'n' }, { h: 'Sales MTD (Tons)', k: 'sales_ton', f: 'n' },
-      { h: 'Gap (Tons)', k: 'gap_ton', f: 'n' }, { h: 'Excess (Tons)', k: 'excess_ton', f: 'n' }, { h: 'Net Gap (Tons)', k: 'net_ton', f: 'n' },
-      ...[['cur', 'Current'], ['cif', 'CIF'], ['dplc', 'DPLC'], ['bptt', 'BPTT']].flatMap(([b, n]) => [
-        { h: `${n} value / case`, k: 'price_' + b, f: 'n' }, { h: `Target (SAR ${n})`, k: 'target_' + b, f: 'n' }, { h: `Sales MTD (SAR ${n})`, k: 'sales_' + b, f: 'n' },
-        { h: `Available (SAR ${n})`, k: 'avail_' + b, f: 'n' }, { h: `Gap (SAR ${n})`, k: 'gap_' + b, f: 'n' }, { h: `Excess (SAR ${n})`, k: 'excess_' + b, f: 'n' }, { h: `Net Gap (SAR ${n})`, k: 'net_' + b, f: 'n' }]),
-    ];
-    const brandCols = [
-      { h: 'Brand', k: 'brand', f: 't', w: 14 }, { h: 'SKUs with target', k: 'skus', f: 'n' }, { h: 'SKUs short', k: 'n_short', f: 'n' }, { h: 'SKUs excess - focus', k: 'n_focus', f: 'n' },
-      { h: 'Target (UOS)', k: 'target_uos', f: 'n' }, { h: 'Sales MTD (UOS)', k: 'sales_uos', f: 'n' }, { h: 'Achievement %', k: 'achievement', f: 'p' }, { h: 'Available (UOS)', k: 'avail_uos', f: 'n' },
-      { h: 'Gap (UOS)', k: 'gap_uos', f: 'n' }, { h: 'Excess (UOS)', k: 'excess_uos', f: 'n' }, { h: 'Net Gap (UOS)', k: 'net_uos', f: 'n' },
-      ...['target', 'sales', 'avail', 'gap', 'excess', 'net'].map((m) => ({ h: `${{ target: 'Target', sales: 'Sales MTD', avail: 'Available', gap: 'Gap', excess: 'Excess', net: 'Net Gap' }[m]} (Tons)`, k: m + '_ton', f: 'n' })),
-      ...[['cur', 'Current'], ['cif', 'CIF'], ['dplc', 'DPLC'], ['bptt', 'BPTT']].flatMap(([b, n]) => ['target', 'sales', 'avail', 'gap', 'excess', 'net'].map((m) =>
-        ({ h: `${{ target: 'Target', sales: 'Sales MTD', avail: 'Available', gap: 'Gap', excess: 'Excess', net: 'Net Gap' }[m]} (SAR ${n})`, k: m + '_' + b, f: 'n' }))),
-    ];
-    const UL = [['uos', 'cases'], ['ton', 'Tons'], ['cur', 'SAR Current'], ['cif', 'SAR CIF'], ['dplc', 'SAR DPLC'], ['bptt', 'SAR BPTT']];
-    const chCols = [{ h: 'Brand', k: 'brand', f: 't', w: 12 }, { h: 'Channel / customer', k: 'name', f: 't', w: 18 }, { h: 'SKUs', k: 'skus', f: 'n' },
-      ...UL.map(([u, n]) => ({ h: `Target (${n})`, k: 'target_' + u, f: 'n' })), ...UL.map(([u, n]) => ({ h: `Sales MTD (${n})`, k: 'sales_' + u, f: 'n' })), { h: 'Achievement %', k: 'achievement', f: 'p' },
-      ...UL.map(([u, n]) => ({ h: `Share (${n})`, k: 'share_' + u, f: 'p' }))];
-    const chSkuCols = [{ h: 'Channel', k: 'channel', f: 't', w: 12 }, { h: 'Customer', k: 'customer', f: 't', w: 12 }, { h: 'SKU', k: 'sku', f: 't', w: 44 }, { h: 'Brand', k: 'brand', f: 't', w: 12 },
-      ...UL.map(([u, n]) => ({ h: `Channel target (${n})`, k: 'target_' + u, f: 'n' })), ...UL.map(([u, n]) => ({ h: `Channel sales MTD (${n})`, k: 'sales_' + u, f: 'n' })), { h: 'Achievement %', k: 'achievement', f: 'p' }, { h: 'Share of SKU target', k: 'share_of_sku', f: 'p' },
-      ...UL.map(([u, n]) => ({ h: `SKU available (${n})`, k: 'avail_' + u, f: 'n' })), { h: 'SKU status', k: 'status', f: 't', w: 16 }];
-    const show = (cls) => document.querySelectorAll('.st-dl-msg').forEach((m) => { m.hidden = !m.classList.contains(cls); });
-    document.querySelectorAll('.st-dl').forEach((btn) => btn.addEventListener('click', async () => {
-      const v = dash.data('sku_view'), t = dash.data('totals'), chv = dash.data('channel_view'), cht = dash.data('channel_totals');
-      if (v.status !== 'ok' || t.status !== 'ok') { show('st-dl-error'); return; }
-      btn.disabled = true;
-      try {
-        const order = { 'Shortage': 0, 'Excess – focus': 1, 'On target': 2, 'No stock SKU': 3 };
-        const skuRows = v.data.slice().sort((a, b) => (order[a.status] - order[b.status]) || (a.gap - b.gap) || (b.excess - a.excess));
-        const blob = workbook([
-          { name: 'SKU detail', cols: skuCols, rows: skuRows },
-          { name: 'By brand', cols: brandCols, rows: t.data },
-          { name: 'Shortages', cols: skuCols, rows: skuRows.filter((r) => r.gap < -0.5) },
-          { name: 'Excess focus', cols: skuCols, rows: skuRows.filter((r) => r.excess > 0.5).sort((a, b) => b.excess_cur - a.excess_cur) },
-          ...(chv.status === 'ok' && cht.status === 'ok' ? [{ name: 'Target by channel', cols: chCols, rows: cht.data.filter((r) => r.level === 'channel') }, { name: 'KA by customer', cols: chCols, rows: cht.data.filter((r) => r.level === 'customer') }, { name: 'Channel target by SKU', cols: chSkuCols, rows: chv.data.slice().sort((a, b) => a.channel.localeCompare(b.channel) || a.customer.localeCompare(b.customer) || b.target_uos - a.target_uos) }] : []),
-        ]);
-        const filename = `Nov_Stock_Gap_${new Date().toISOString().slice(0, 10)}.xlsx`;
-        let downloads = null;
-        try { downloads = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (e) { downloads = null; }
-        if (!downloads) {
-          // Shared-link view: the platform save isn't offered here, so hand the browser the file directly.
-          const url = URL.createObjectURL(new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
-          const a = document.createElement('a');
-          a.href = url; a.download = filename; a.rel = 'noopener';
-          a.click();
-          setTimeout(() => URL.revokeObjectURL(url), 60000);
-          show('st-dl-direct');
-          return;
-        }
-        await downloads.save({ filename, data: blob });
-        show('st-dl-saved');
-      } catch (e) {
-        const code = e && e.code;
-        show(code === 'declined' ? 'st-dl-declined' : (code === 'unavailable' || code === 'not_granted' || code === 'capability_disabled' || code === 'capability_removed' || code === 'extension_not_enabled') ? 'st-dl-none' : 'st-dl-error');
-      } finally { btn.disabled = false; }
-    }));
-  })();
 </script>
 
 </div>
