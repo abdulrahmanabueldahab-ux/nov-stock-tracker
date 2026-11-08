@@ -97,7 +97,9 @@
   .st-kpi-value { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: clamp(1.15rem, 1.6vw, var(--cds-font-size-title)); line-height: 1.15; white-space: nowrap; }
   .st-kpi-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   .st-kpi.is-bad .st-kpi-value { color: var(--color-bad); }
-  .st-kpi.is-warn .st-kpi-value { color: var(--color-warn); }
+  .st-kpi.is-good .st-kpi-value, .st-kpi .st-kpi-value.is-good { color: var(--color-ok); }
+  .st-kpi .st-kpi-value.is-bad { color: var(--color-bad); }
+  .st-good { color: var(--color-ok); font-weight: 600; } .st-bad { color: var(--color-bad); font-weight: 600; }
   .st-grid { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); }
   .st-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: grid; gap: var(--cds-gap-sm); align-content: start; min-width: 0; }
   .st-card h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
@@ -121,8 +123,8 @@
   .st-table:not(.b-cif) .b-cif, .st-table:not(.b-dplc) .b-dplc, .st-table:not(.b-bptt) .b-bptt { display: none; }
   .st-table tfoot td { font-weight: 600; }
   .st-pill { display: inline-block; padding: 0 var(--cds-pad-xs); border-radius: 999px; border: 1px solid currentColor; font-size: var(--cds-font-size-caption); }
-  .st-pill.s-bad { color: var(--color-bad); } .st-pill.s-warn { color: var(--color-warn); } .st-pill.s-ok { color: var(--color-ok); } .st-pill.s-muted { color: var(--color-fg-muted); }
-  .st-neg { color: var(--color-bad); } .st-pos { color: var(--color-warn); }
+  .st-pill.s-bad { color: var(--color-bad); background: color-mix(in srgb, var(--color-bad) 10%, transparent); } .st-pill.s-warn, .st-pill.s-ok { color: var(--color-ok); background: color-mix(in srgb, var(--color-ok) 10%, transparent); } .st-pill.s-muted { color: var(--color-fg-muted); }
+  .st-neg { color: var(--color-bad); } .st-pos { color: var(--color-ok); }
   .st-search { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); min-width: 0; flex: 1 1 12rem; max-width: 22rem; }
   .st-wrap details { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   .st-wrap details dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--cds-gap-xs) var(--cds-gap-md); }
@@ -187,9 +189,9 @@
     <div class="st-kpi" id="kpi-target"><span class="st-kpi-label">Nov target</span><span class="st-kpi-value" data-draw="kpi" data-metric="target">—</span><span class="st-kpi-note st-all-only">Full month</span><span class="st-kpi-note st-ch-only" hidden>Full month, selected channel</span></div>
     <div class="st-kpi" id="kpi-sales"><span class="st-kpi-label">Nov sales to date</span><span class="st-kpi-value" data-draw="kpi" data-metric="sales">—</span><span class="st-kpi-note">Achievement <span data-draw="kpi-ach">—</span></span><span class="st-kpi-note st-ch-only" hidden>Selected channel</span></div>
     <div class="st-kpi" id="kpi-avail"><span class="st-kpi-label">Available stock</span><span class="st-kpi-value" data-draw="kpi" data-metric="avail">—</span><span class="st-kpi-note">Opening + Nov releases − Nov sales − blocked stock</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
-    <div class="st-kpi" id="kpi-blocked"><span class="st-kpi-label">Blocked stock</span><span class="st-kpi-value" data-draw="kpi" data-metric="blocked">—</span><span class="st-kpi-note">Awaiting pickup, not available for sale</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
+    <div class="st-kpi is-bad" id="kpi-blocked"><span class="st-kpi-label">Blocked stock</span><span class="st-kpi-value" data-draw="kpi" data-metric="blocked">—</span><span class="st-kpi-note">Awaiting pickup, not available for sale</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
     <div class="st-kpi is-bad" id="kpi-gap"><span class="st-kpi-label">Gap (shortage only)</span><span class="st-kpi-value" data-draw="kpi" data-metric="gap">—</span><span class="st-kpi-note">Short SKUs only, no offset</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
-    <div class="st-kpi is-warn" id="kpi-excess"><span class="st-kpi-label">Excess above target</span><span class="st-kpi-value" data-draw="kpi" data-metric="excess">—</span><span class="st-kpi-note">Stock to push</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
+    <div class="st-kpi is-good" id="kpi-excess"><span class="st-kpi-label">Excess above target</span><span class="st-kpi-value" data-draw="kpi" data-metric="excess">—</span><span class="st-kpi-note">Stock to push</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
     <div class="st-kpi" id="kpi-net"><span class="st-kpi-label">Net gap</span><span class="st-kpi-value" data-draw="kpi" data-metric="net">—</span><span class="st-kpi-note">Gap + excess</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
   </section>
 
@@ -201,7 +203,7 @@
     </section>
     <section class="st-card" id="focus">
       <h2>Excess stock that needs focus</h2>
-      <p class="st-note">Top 12 SKUs with available stock above remaining target.</p>
+      <p class="st-note">Top 12 SKUs with available stock above remaining target: an opportunity to push sell-out.</p>
       <div class="st-bars" data-draw="bars-excess" data-source="sku_view"></div>
     </section>
   </div>
@@ -267,7 +269,7 @@
 
   <section class="st-card" id="skus">
     <h2>All SKUs</h2>
-    <p class="st-note">Click a column to sort. Remaining target = Nov target − Nov sales to date.</p>
+    <p class="st-note">Click a column to sort. Remaining target = Nov target − Nov sales to date. <span class="st-bad">Red</span> = issue (shortage, blocked stock, cover or achievement behind). <span class="st-good">Green</span> = good or an opportunity (on target, excess stock to push, cover and achievement on track).</p>
     <div class="st-controls">
       <input id="st-search" class="st-search" type="search" placeholder="Search SKU" aria-label="Search SKU">
       <select id="st-status" class="dash-select st-status" aria-label="Status">
@@ -306,6 +308,7 @@
       <dt>Excess</dt><dd>MAX(0, available − remaining target), per SKU. Shown as “Excess – focus”.</dd>
       <dt>Net gap</dt><dd>Gap + excess.</dd>
       <dt>Tons</dt><dd>UOS ÷ cases per ton (CPT) from your price file. SKUs without a CPT (target lines with no stock SKU, and BROOKEBOND TB KSA with CPT 0) count as 0 Tons.</dd>
+      <dt>Colours</dt><dd>Red marks issues: shortages, blocked stock, negative net gap, cover below 100% and achievement behind time gone. Green marks good results and opportunities: SKUs on target, excess stock to push, positive net gap, cover of 100% or more and achievement at or ahead of time gone. Time gone = days of sales loaded ÷ 30 (now 3 ÷ 30 = 10%).</dd>
       <dt>Cover</dt><dd>Available stock ÷ remaining target.</dd>
       <dt>SAR values</dt><dd>UOS × the SKU's value per case on the basis you pick: BPTT (default), CIF or DPLC (LC per case, from the price file). Target lines with no stock SKU (HI 24X20 packs, Pukka Feel New and others) and Pukka After Dinner (not in the price file) have no value, so they count in UOS only.</dd>
       <dt>Channel targets</dt><dd>From your Target by channel file (KA by customer, WS, RVS, OOH, VFM, Ecom, LSM, Convenience). Matcha DTTC, Inf After Meal and Inf Quiet Moments there are the SKU list’s Matcha 3P, Inf After Dinner and Inf Time to Chill. Unallocated = SKU target − channel targets (HI 24X20 packs).</dd>
@@ -428,6 +431,12 @@
   const brandOf = () => dash.params().brand || 'All';
   const basisOf = () => { const b = dash.params().basis; return ['bptt', 'cif', 'dplc'].includes(b) ? b : 'bptt'; };
   const sfx = () => (unitOf() === 'sar' ? basisOf() : unitOf());
+  // Achievement is judged against time gone in the month: sales cover 1–3 Nov (3 of 30 days).
+  const SALES_DAYS = 3, MONTH_DAYS = 30;
+  const TIME_GONE = SALES_DAYS / MONTH_DAYS;
+  const achCls = (a) => (a == null ? '' : a >= TIME_GONE ? 'st-good' : 'st-bad');
+  const coverCls = (c) => (c == null ? '' : c >= 1 ? 'st-good' : 'st-bad');
+  const signCls = (x) => (x < -0.5 ? 'st-neg' : x > 0.5 ? 'st-pos' : '');
   const chPick = () => {
     const ch = dash.params().channel || 'All', cu = dash.params().customer || 'All';
     if (ch === 'All' && cu === 'All') return null;
@@ -509,11 +518,13 @@
       const r = t.status === 'ok' ? t.data.find((x) => x.row_key === key) : null;
       el.dataset.source = 'channel_totals'; el.dataset.field = 'achievement'; el.dataset.where = 'row_key=' + encodeURIComponent(key);
       el.textContent = r ? d3.format('.1%')(r.achievement) : '—';
+      el.className = r ? achCls(r.achievement) : '';
       return;
     }
     const r = totalsRow();
     setMark(el, 'achievement');
     el.textContent = r ? d3.format('.1%')(r.achievement) : '—';
+    el.className = r ? achCls(r.achievement) : '';
   });
 
   dash.draw('kpi', (el) => {
@@ -537,6 +548,7 @@
     const r = totalsRow();
     setMark(el, f);
     el.textContent = r ? fmtUnit(r[f], unitOf(), true) : '—';
+    if (m === 'net') el.className = 'st-kpi-value' + (r ? (r[f] < -0.5 ? ' is-bad' : r[f] > 0.5 ? ' is-good' : '') : '');
   });
 
   // bar lists
@@ -561,7 +573,7 @@
     });
   };
   dash.draw('bars-gap', (el) => drawBars(el, 'gap', 'var(--cds-chart-status-critical)'));
-  dash.draw('bars-excess', (el) => drawBars(el, 'excess', dash.colors[2] || dash.colors[0]));
+  dash.draw('bars-excess', (el) => drawBars(el, 'excess', 'var(--color-ok)'));
 
   // brand table
   const cell = (tr, text, cls) => { const td = document.createElement('td'); if (cls) td.className = cls; td.textContent = text; tr.append(td); return td; };
@@ -575,7 +587,7 @@
       ['target', 'sales', 'avail', 'blocked', 'gap', 'excess', 'net'].forEach((m) => {
         ['bptt', 'cif', 'dplc', 'uos', 'ton'].forEach((u) => {
           const x = r[m + '_' + u];
-          cell(tr, u === 'ton' ? d3.format(',.1f')(x) : fmtNum(x), (u === 'uos' || u === 'ton' ? 'c-' + u : 'c-sar b-' + u) + (m === 'gap' && x < -0.5 ? ' st-neg' : m === 'excess' && x > 0.5 ? ' st-pos' : ''));
+          cell(tr, u === 'ton' ? d3.format(',.1f')(x) : fmtNum(x), (u === 'uos' || u === 'ton' ? 'c-' + u : 'c-sar b-' + u) + ((m === 'gap' || m === 'net') && x < -0.5 ? ' st-neg' : (m === 'excess' || m === 'net') && x > 0.5 ? ' st-pos' : m === 'blocked' && x > 0.5 ? ' st-neg' : ''));
         });
       });
       el.append(tr);
@@ -596,7 +608,7 @@
       cell(tr, r.name); cell(tr, fmtNum(r.skus));
       UNITS.forEach((u) => cell(tr, fmtCell(u, r['target_' + u]), unitCls(u)));
       UNITS.forEach((u) => cell(tr, fmtCell(u, r['sales_' + u]), unitCls(u)));
-      cell(tr, d3.format('.1%')(r.achievement));
+      cell(tr, d3.format('.1%')(r.achievement), achCls(r.achievement));
       UNITS.forEach((u) => cell(tr, d3.format('.1%')(r['share_' + u]), unitCls(u)));
       el.append(tr);
     });
@@ -617,7 +629,7 @@
         cell(tr, r.sku); cell(tr, r.channel, 't-txt'); cell(tr, r.customer || '–', 't-txt');
         UNITS.forEach((u) => cell(tr, fmtCell(u, r['target_' + u]), unitCls(u)));
         UNITS.forEach((u) => cell(tr, fmtCell(u, r['sales_' + u]), unitCls(u)));
-        cell(tr, r.achievement == null ? '–' : d3.format('.0%')(r.achievement));
+        cell(tr, r.achievement == null ? '–' : d3.format('.0%')(r.achievement), achCls(r.achievement));
         cell(tr, r.share_of_sku == null ? '–' : d3.format('.0%')(r.share_of_sku));
         UNITS.forEach((u) => cell(tr, fmtCell(u, r['avail_' + u]), unitCls(u)));
         const td = cell(tr, '', 't-txt'); const p = document.createElement('span'); p.className = 'st-pill ' + (pillClass[r.status] || ''); p.textContent = r.status; td.append(p);
@@ -647,13 +659,13 @@
       cell(tr, r.brand, 't-txt');
       const td = cell(tr, '', 't-txt'); const p = document.createElement('span'); p.className = 'st-pill ' + (pillClass[r.status] || ''); p.textContent = r.status; td.append(p);
       [['target', 'nov_target'], ['sales', 'nov_sales'], ['avail', 'available'], ['blocked', 'nov_blocked'], ['gap', 'gap'], ['excess', 'excess']].forEach(([s, q]) => {
-        const neg = q === 'gap' && r[q] < -0.5, pos = q === 'excess' && r[q] > 0.5;
+        const neg = (q === 'gap' && r[q] < -0.5) || (q === 'nov_blocked' && r[q] > 0.5), pos = q === 'excess' && r[q] > 0.5;
         const extra = neg ? ' st-neg' : pos ? ' st-pos' : '';
         ['bptt', 'cif', 'dplc'].forEach((b) => cell(tr, fmtNum(r[s + '_' + b]), 'c-sar b-' + b + extra));
         cell(tr, fmtNum(r[q]), 'c-uos' + extra);
         cell(tr, d3.format(',.1f')(r[s + '_ton']), 'c-ton' + extra);
       });
-      cell(tr, r.cover == null ? '–' : d3.format('.0%')(r.cover));
+      cell(tr, r.cover == null ? '–' : d3.format('.0%')(r.cover), coverCls(r.cover));
       el.append(tr);
     });
   });
