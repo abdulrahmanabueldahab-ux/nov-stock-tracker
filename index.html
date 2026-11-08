@@ -39,7 +39,7 @@
   (() => {
     const inputs = JSON.parse(document.getElementById('sku-data').textContent);
     const calcs = {}, order = [], draws = {}, onDataFns = [];
-    let params = { unit: 'sar', brand: 'All', status: 'All', basis: 'cur', channel: 'All', customer: 'All' }, cache = null;
+    let params = { unit: 'sar', brand: 'All', status: 'All', basis: 'bptt', channel: 'All', customer: 'All' }, cache = null;
     const compute = () => {
       if (cache) return cache;
       cache = { sku_inputs: inputs, channel_targets: JSON.parse(document.getElementById('channel-data').textContent), channel_sales: JSON.parse(document.getElementById('chsales-data').textContent) };
@@ -55,7 +55,7 @@
       onData: (fn) => { onDataFns.push(fn); },
       params: () => ({ ...params }),
       setParams: (p) => { params = { ...params, ...p }; runAll(); },
-      resetParams: () => { params = { unit: 'sar', brand: 'All', status: 'All', basis: 'cur', channel: 'All', customer: 'All' }; runAll(); },
+      resetParams: () => { params = { unit: 'sar', brand: 'All', status: 'All', basis: 'bptt', channel: 'All', customer: 'All' }; runAll(); },
       colors: ['#0f5c4d', '#3a6ea5', 'var(--excess)'],
       refresh: () => {}, setLink: () => {}, loader: () => {},
       _run: runAll,
@@ -118,7 +118,7 @@
   .st-table th { position: sticky; top: 0; background: var(--color-panel); font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); z-index: 1; }
   .st-th { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
   .st-table:not(.u-sar) .c-sar, .st-table:not(.u-uos) .c-uos, .st-table:not(.u-ton) .c-ton { display: none; }
-  .st-table:not(.b-cur) .b-cur, .st-table:not(.b-cif) .b-cif, .st-table:not(.b-dplc) .b-dplc, .st-table:not(.b-bptt) .b-bptt { display: none; }
+  .st-table:not(.b-cif) .b-cif, .st-table:not(.b-dplc) .b-dplc, .st-table:not(.b-bptt) .b-bptt { display: none; }
   .st-table tfoot td { font-weight: 600; }
   .st-pill { display: inline-block; padding: 0 var(--cds-pad-xs); border-radius: 999px; border: 1px solid currentColor; font-size: var(--cds-font-size-caption); }
   .st-pill.s-bad { color: var(--color-bad); } .st-pill.s-warn { color: var(--color-warn); } .st-pill.s-ok { color: var(--color-ok); } .st-pill.s-muted { color: var(--color-fg-muted); }
@@ -146,10 +146,9 @@
     </div>
     <span class="st-label">Value basis</span>
     <select id="st-basis" class="dash-select st-basis" aria-label="Value basis">
-      <option value="cur">Current value</option>
+      <option value="bptt">BPTT</option>
       <option value="cif">CIF</option>
       <option value="dplc">DPLC</option>
-      <option value="bptt">BPTT</option>
     </select>
     <span class="st-label">Brand</span>
     <select id="st-brand" class="dash-select st-brand" aria-label="Brand">
@@ -181,7 +180,7 @@
       <option value="Farm">Farm</option>
       <option value="Oth MT">Oth MT</option>
     </select>
-    <a id="st-download" class="st-dl" href="https://abdulrahmanabueldahab-ux.github.io/nov-stock-tracker/Nov_Stock_Tracker.xlsx?v=20261108-2" target="_blank" rel="noopener" download="Nov_Stock_Tracker.xlsx">Download Excel (pivot)</a>
+    <a id="st-download" class="st-dl" href="https://abdulrahmanabueldahab-ux.github.io/nov-stock-tracker/Nov_Stock_Tracker.xlsx?v=20261108-3" target="_blank" rel="noopener" download="Nov_Stock_Tracker.xlsx">Download Excel (pivot)</a>
   </div>
 
   <section class="st-kpis" id="kpis" aria-label="Headline figures">
@@ -210,18 +209,18 @@
     <h2>By brand</h2>
     <p class="st-note">Gap and excess are summed per SKU, so excess on one SKU never offsets a shortage on another.</p>
     <div class="st-table-box">
-      <table class="st-table u-sar b-cur" data-source="totals" data-row-key="brand">
+      <table class="st-table u-sar b-bptt" data-source="totals" data-row-key="brand">
         <thead><tr>
           <th data-field="brand">Brand</th>
           <th data-field="skus">SKUs</th>
           <th data-field="n_short">Short</th>
           <th data-field="n_focus">Focus</th>
-          <th class="c-sar b-cur" data-field="target_cur">Target</th><th class="c-sar b-cif" data-field="target_cif">Target</th><th class="c-sar b-dplc" data-field="target_dplc">Target</th><th class="c-sar b-bptt" data-field="target_bptt">Target</th><th class="c-uos" data-field="target_uos">Target</th><th class="c-ton" data-field="target_ton">Target</th>
-          <th class="c-sar b-cur" data-field="sales_cur">Sales</th><th class="c-sar b-cif" data-field="sales_cif">Sales</th><th class="c-sar b-dplc" data-field="sales_dplc">Sales</th><th class="c-sar b-bptt" data-field="sales_bptt">Sales</th><th class="c-uos" data-field="sales_uos">Sales</th><th class="c-ton" data-field="sales_ton">Sales</th>
-          <th class="c-sar b-cur" data-field="avail_cur">Available</th><th class="c-sar b-cif" data-field="avail_cif">Available</th><th class="c-sar b-dplc" data-field="avail_dplc">Available</th><th class="c-sar b-bptt" data-field="avail_bptt">Available</th><th class="c-uos" data-field="avail_uos">Available</th><th class="c-ton" data-field="avail_ton">Available</th>
-          <th class="c-sar b-cur" data-field="gap_cur">Gap</th><th class="c-sar b-cif" data-field="gap_cif">Gap</th><th class="c-sar b-dplc" data-field="gap_dplc">Gap</th><th class="c-sar b-bptt" data-field="gap_bptt">Gap</th><th class="c-uos" data-field="gap_uos">Gap</th><th class="c-ton" data-field="gap_ton">Gap</th>
-          <th class="c-sar b-cur" data-field="excess_cur">Excess</th><th class="c-sar b-cif" data-field="excess_cif">Excess</th><th class="c-sar b-dplc" data-field="excess_dplc">Excess</th><th class="c-sar b-bptt" data-field="excess_bptt">Excess</th><th class="c-uos" data-field="excess_uos">Excess</th><th class="c-ton" data-field="excess_ton">Excess</th>
-          <th class="c-sar b-cur" data-field="net_cur">Net gap</th><th class="c-sar b-cif" data-field="net_cif">Net gap</th><th class="c-sar b-dplc" data-field="net_dplc">Net gap</th><th class="c-sar b-bptt" data-field="net_bptt">Net gap</th><th class="c-uos" data-field="net_uos">Net gap</th><th class="c-ton" data-field="net_ton">Net gap</th>
+          <th class="c-sar b-cif" data-field="target_cif">Target</th><th class="c-sar b-dplc" data-field="target_dplc">Target</th><th class="c-sar b-bptt" data-field="target_bptt">Target</th><th class="c-uos" data-field="target_uos">Target</th><th class="c-ton" data-field="target_ton">Target</th>
+          <th class="c-sar b-cif" data-field="sales_cif">Sales</th><th class="c-sar b-dplc" data-field="sales_dplc">Sales</th><th class="c-sar b-bptt" data-field="sales_bptt">Sales</th><th class="c-uos" data-field="sales_uos">Sales</th><th class="c-ton" data-field="sales_ton">Sales</th>
+          <th class="c-sar b-cif" data-field="avail_cif">Available</th><th class="c-sar b-dplc" data-field="avail_dplc">Available</th><th class="c-sar b-bptt" data-field="avail_bptt">Available</th><th class="c-uos" data-field="avail_uos">Available</th><th class="c-ton" data-field="avail_ton">Available</th>
+          <th class="c-sar b-cif" data-field="gap_cif">Gap</th><th class="c-sar b-dplc" data-field="gap_dplc">Gap</th><th class="c-sar b-bptt" data-field="gap_bptt">Gap</th><th class="c-uos" data-field="gap_uos">Gap</th><th class="c-ton" data-field="gap_ton">Gap</th>
+          <th class="c-sar b-cif" data-field="excess_cif">Excess</th><th class="c-sar b-dplc" data-field="excess_dplc">Excess</th><th class="c-sar b-bptt" data-field="excess_bptt">Excess</th><th class="c-uos" data-field="excess_uos">Excess</th><th class="c-ton" data-field="excess_ton">Excess</th>
+          <th class="c-sar b-cif" data-field="net_cif">Net gap</th><th class="c-sar b-dplc" data-field="net_dplc">Net gap</th><th class="c-sar b-bptt" data-field="net_bptt">Net gap</th><th class="c-uos" data-field="net_uos">Net gap</th><th class="c-ton" data-field="net_ton">Net gap</th>
         </tr></thead>
         <tbody data-draw="brand-body"></tbody>
       </table>
@@ -233,8 +232,8 @@
       <h2>Target by channel</h2>
       <p class="st-note">November target and sales to date by channel; Ach. = sales ÷ target in cases. Click a channel to list its SKUs below. Unallocated is SKU target the channel file doesn’t assign to a channel.</p>
       <div class="st-table-box">
-        <table class="st-table u-sar b-cur st-ch-table" data-source="channel_totals" data-row-key="row_key">
-          <thead><tr><th data-field="name">Channel</th><th data-field="skus">SKUs</th><th class="c-sar b-cur" data-field="target_cur">Target</th><th class="c-sar b-cif" data-field="target_cif">Target</th><th class="c-sar b-dplc" data-field="target_dplc">Target</th><th class="c-sar b-bptt" data-field="target_bptt">Target</th><th class="c-uos" data-field="target_uos">Target</th><th class="c-ton" data-field="target_ton">Target</th><th class="c-sar b-cur" data-field="sales_cur">Sales</th><th class="c-sar b-cif" data-field="sales_cif">Sales</th><th class="c-sar b-dplc" data-field="sales_dplc">Sales</th><th class="c-sar b-bptt" data-field="sales_bptt">Sales</th><th class="c-uos" data-field="sales_uos">Sales</th><th class="c-ton" data-field="sales_ton">Sales</th><th data-field="achievement">Ach.</th><th class="c-sar b-cur" data-field="share_cur">Share</th><th class="c-sar b-cif" data-field="share_cif">Share</th><th class="c-sar b-dplc" data-field="share_dplc">Share</th><th class="c-sar b-bptt" data-field="share_bptt">Share</th><th class="c-uos" data-field="share_uos">Share</th><th class="c-ton" data-field="share_ton">Share</th></tr></thead>
+        <table class="st-table u-sar b-bptt st-ch-table" data-source="channel_totals" data-row-key="row_key">
+          <thead><tr><th data-field="name">Channel</th><th data-field="skus">SKUs</th><th class="c-sar b-cif" data-field="target_cif">Target</th><th class="c-sar b-dplc" data-field="target_dplc">Target</th><th class="c-sar b-bptt" data-field="target_bptt">Target</th><th class="c-uos" data-field="target_uos">Target</th><th class="c-ton" data-field="target_ton">Target</th><th class="c-sar b-cif" data-field="sales_cif">Sales</th><th class="c-sar b-dplc" data-field="sales_dplc">Sales</th><th class="c-sar b-bptt" data-field="sales_bptt">Sales</th><th class="c-uos" data-field="sales_uos">Sales</th><th class="c-ton" data-field="sales_ton">Sales</th><th data-field="achievement">Ach.</th><th class="c-sar b-cif" data-field="share_cif">Share</th><th class="c-sar b-dplc" data-field="share_dplc">Share</th><th class="c-sar b-bptt" data-field="share_bptt">Share</th><th class="c-uos" data-field="share_uos">Share</th><th class="c-ton" data-field="share_ton">Share</th></tr></thead>
           <tbody data-draw="ch-body"></tbody>
         </table>
       </div>
@@ -243,8 +242,8 @@
       <h2>Key accounts by customer</h2>
       <p class="st-note">KA target and sales to date by customer. Click a customer to list its SKUs below.</p>
       <div class="st-table-box">
-        <table class="st-table u-sar b-cur st-cu-table" data-source="channel_totals" data-row-key="row_key">
-          <thead><tr><th data-field="name">Customer</th><th data-field="skus">SKUs</th><th class="c-sar b-cur" data-field="target_cur">Target</th><th class="c-sar b-cif" data-field="target_cif">Target</th><th class="c-sar b-dplc" data-field="target_dplc">Target</th><th class="c-sar b-bptt" data-field="target_bptt">Target</th><th class="c-uos" data-field="target_uos">Target</th><th class="c-ton" data-field="target_ton">Target</th><th class="c-sar b-cur" data-field="sales_cur">Sales</th><th class="c-sar b-cif" data-field="sales_cif">Sales</th><th class="c-sar b-dplc" data-field="sales_dplc">Sales</th><th class="c-sar b-bptt" data-field="sales_bptt">Sales</th><th class="c-uos" data-field="sales_uos">Sales</th><th class="c-ton" data-field="sales_ton">Sales</th><th data-field="achievement">Ach.</th><th class="c-sar b-cur" data-field="share_cur">Share of KA</th><th class="c-sar b-cif" data-field="share_cif">Share of KA</th><th class="c-sar b-dplc" data-field="share_dplc">Share of KA</th><th class="c-sar b-bptt" data-field="share_bptt">Share of KA</th><th class="c-uos" data-field="share_uos">Share of KA</th><th class="c-ton" data-field="share_ton">Share of KA</th></tr></thead>
+        <table class="st-table u-sar b-bptt st-cu-table" data-source="channel_totals" data-row-key="row_key">
+          <thead><tr><th data-field="name">Customer</th><th data-field="skus">SKUs</th><th class="c-sar b-cif" data-field="target_cif">Target</th><th class="c-sar b-dplc" data-field="target_dplc">Target</th><th class="c-sar b-bptt" data-field="target_bptt">Target</th><th class="c-uos" data-field="target_uos">Target</th><th class="c-ton" data-field="target_ton">Target</th><th class="c-sar b-cif" data-field="sales_cif">Sales</th><th class="c-sar b-dplc" data-field="sales_dplc">Sales</th><th class="c-sar b-bptt" data-field="sales_bptt">Sales</th><th class="c-uos" data-field="sales_uos">Sales</th><th class="c-ton" data-field="sales_ton">Sales</th><th data-field="achievement">Ach.</th><th class="c-sar b-cif" data-field="share_cif">Share of KA</th><th class="c-sar b-dplc" data-field="share_dplc">Share of KA</th><th class="c-sar b-bptt" data-field="share_bptt">Share of KA</th><th class="c-uos" data-field="share_uos">Share of KA</th><th class="c-ton" data-field="share_ton">Share of KA</th></tr></thead>
           <tbody data-draw="cu-body"></tbody>
         </table>
       </div>
@@ -258,8 +257,8 @@
       <input id="st-ch-search" class="st-search st-ch-search" type="search" placeholder="Search SKU" aria-label="Search SKU in channel table">
     </div>
     <div class="st-table-box">
-      <table class="st-table u-sar b-cur st-chsku-table" data-source="channel_view" data-row-key="key">
-        <thead><tr><th data-field="sku">SKU</th><th class="t-txt" data-field="channel">Channel</th><th class="t-txt" data-field="customer">Customer</th><th class="c-sar b-cur" data-field="target_cur">Channel target</th><th class="c-sar b-cif" data-field="target_cif">Channel target</th><th class="c-sar b-dplc" data-field="target_dplc">Channel target</th><th class="c-sar b-bptt" data-field="target_bptt">Channel target</th><th class="c-uos" data-field="target_uos">Channel target</th><th class="c-ton" data-field="target_ton">Channel target</th><th class="c-sar b-cur" data-field="sales_cur">Channel sales</th><th class="c-sar b-cif" data-field="sales_cif">Channel sales</th><th class="c-sar b-dplc" data-field="sales_dplc">Channel sales</th><th class="c-sar b-bptt" data-field="sales_bptt">Channel sales</th><th class="c-uos" data-field="sales_uos">Channel sales</th><th class="c-ton" data-field="sales_ton">Channel sales</th><th data-field="achievement">Ach.</th><th data-field="share_of_sku">Share of SKU target</th><th class="c-sar b-cur" data-field="avail_cur">SKU available</th><th class="c-sar b-cif" data-field="avail_cif">SKU available</th><th class="c-sar b-dplc" data-field="avail_dplc">SKU available</th><th class="c-sar b-bptt" data-field="avail_bptt">SKU available</th><th class="c-uos" data-field="avail_uos">SKU available</th><th class="c-ton" data-field="avail_ton">SKU available</th><th class="t-txt" data-field="status">SKU status</th></tr></thead>
+      <table class="st-table u-sar b-bptt st-chsku-table" data-source="channel_view" data-row-key="key">
+        <thead><tr><th data-field="sku">SKU</th><th class="t-txt" data-field="channel">Channel</th><th class="t-txt" data-field="customer">Customer</th><th class="c-sar b-cif" data-field="target_cif">Channel target</th><th class="c-sar b-dplc" data-field="target_dplc">Channel target</th><th class="c-sar b-bptt" data-field="target_bptt">Channel target</th><th class="c-uos" data-field="target_uos">Channel target</th><th class="c-ton" data-field="target_ton">Channel target</th><th class="c-sar b-cif" data-field="sales_cif">Channel sales</th><th class="c-sar b-dplc" data-field="sales_dplc">Channel sales</th><th class="c-sar b-bptt" data-field="sales_bptt">Channel sales</th><th class="c-uos" data-field="sales_uos">Channel sales</th><th class="c-ton" data-field="sales_ton">Channel sales</th><th data-field="achievement">Ach.</th><th data-field="share_of_sku">Share of SKU target</th><th class="c-sar b-cif" data-field="avail_cif">SKU available</th><th class="c-sar b-dplc" data-field="avail_dplc">SKU available</th><th class="c-sar b-bptt" data-field="avail_bptt">SKU available</th><th class="c-uos" data-field="avail_uos">SKU available</th><th class="c-ton" data-field="avail_ton">SKU available</th><th class="t-txt" data-field="status">SKU status</th></tr></thead>
         <tbody data-draw="chsku-body"></tbody>
       </table>
     </div>
@@ -279,16 +278,16 @@
       </select>
     </div>
     <div class="st-table-box">
-      <table class="st-table u-sar b-cur st-sku-table" data-source="sku_view" data-row-key="sku">
+      <table class="st-table u-sar b-bptt st-sku-table" data-source="sku_view" data-row-key="sku">
         <thead><tr>
           <th data-field="sku"><button type="button" class="st-th" data-sort="sku">SKU</button></th>
           <th class="t-txt" data-field="brand"><button type="button" class="st-th" data-sort="brand">Brand</button></th>
           <th class="t-txt" data-field="status"><button type="button" class="st-th" data-sort="status">Status</button></th>
-          <th class="c-sar b-cur" data-field="target_cur"><button type="button" class="st-th" data-sort="target">Target</button></th><th class="c-sar b-cif" data-field="target_cif"><button type="button" class="st-th" data-sort="target">Target</button></th><th class="c-sar b-dplc" data-field="target_dplc"><button type="button" class="st-th" data-sort="target">Target</button></th><th class="c-sar b-bptt" data-field="target_bptt"><button type="button" class="st-th" data-sort="target">Target</button></th><th class="c-uos" data-field="nov_target"><button type="button" class="st-th" data-sort="target">Target</button></th><th class="c-ton" data-field="target_ton"><button type="button" class="st-th" data-sort="target">Target</button></th>
-          <th class="c-sar b-cur" data-field="sales_cur"><button type="button" class="st-th" data-sort="sales">Sales</button></th><th class="c-sar b-cif" data-field="sales_cif"><button type="button" class="st-th" data-sort="sales">Sales</button></th><th class="c-sar b-dplc" data-field="sales_dplc"><button type="button" class="st-th" data-sort="sales">Sales</button></th><th class="c-sar b-bptt" data-field="sales_bptt"><button type="button" class="st-th" data-sort="sales">Sales</button></th><th class="c-uos" data-field="nov_sales"><button type="button" class="st-th" data-sort="sales">Sales</button></th><th class="c-ton" data-field="sales_ton"><button type="button" class="st-th" data-sort="sales">Sales</button></th>
-          <th class="c-sar b-cur" data-field="avail_cur"><button type="button" class="st-th" data-sort="avail">Available</button></th><th class="c-sar b-cif" data-field="avail_cif"><button type="button" class="st-th" data-sort="avail">Available</button></th><th class="c-sar b-dplc" data-field="avail_dplc"><button type="button" class="st-th" data-sort="avail">Available</button></th><th class="c-sar b-bptt" data-field="avail_bptt"><button type="button" class="st-th" data-sort="avail">Available</button></th><th class="c-uos" data-field="available"><button type="button" class="st-th" data-sort="avail">Available</button></th><th class="c-ton" data-field="avail_ton"><button type="button" class="st-th" data-sort="avail">Available</button></th>
-          <th class="c-sar b-cur" data-field="gap_cur"><button type="button" class="st-th" data-sort="gap">Gap</button></th><th class="c-sar b-cif" data-field="gap_cif"><button type="button" class="st-th" data-sort="gap">Gap</button></th><th class="c-sar b-dplc" data-field="gap_dplc"><button type="button" class="st-th" data-sort="gap">Gap</button></th><th class="c-sar b-bptt" data-field="gap_bptt"><button type="button" class="st-th" data-sort="gap">Gap</button></th><th class="c-uos" data-field="gap"><button type="button" class="st-th" data-sort="gap">Gap</button></th><th class="c-ton" data-field="gap_ton"><button type="button" class="st-th" data-sort="gap">Gap</button></th>
-          <th class="c-sar b-cur" data-field="excess_cur"><button type="button" class="st-th" data-sort="excess">Excess</button></th><th class="c-sar b-cif" data-field="excess_cif"><button type="button" class="st-th" data-sort="excess">Excess</button></th><th class="c-sar b-dplc" data-field="excess_dplc"><button type="button" class="st-th" data-sort="excess">Excess</button></th><th class="c-sar b-bptt" data-field="excess_bptt"><button type="button" class="st-th" data-sort="excess">Excess</button></th><th class="c-uos" data-field="excess"><button type="button" class="st-th" data-sort="excess">Excess</button></th><th class="c-ton" data-field="excess_ton"><button type="button" class="st-th" data-sort="excess">Excess</button></th>
+          <th class="c-sar b-cif" data-field="target_cif"><button type="button" class="st-th" data-sort="target">Target</button></th><th class="c-sar b-dplc" data-field="target_dplc"><button type="button" class="st-th" data-sort="target">Target</button></th><th class="c-sar b-bptt" data-field="target_bptt"><button type="button" class="st-th" data-sort="target">Target</button></th><th class="c-uos" data-field="nov_target"><button type="button" class="st-th" data-sort="target">Target</button></th><th class="c-ton" data-field="target_ton"><button type="button" class="st-th" data-sort="target">Target</button></th>
+          <th class="c-sar b-cif" data-field="sales_cif"><button type="button" class="st-th" data-sort="sales">Sales</button></th><th class="c-sar b-dplc" data-field="sales_dplc"><button type="button" class="st-th" data-sort="sales">Sales</button></th><th class="c-sar b-bptt" data-field="sales_bptt"><button type="button" class="st-th" data-sort="sales">Sales</button></th><th class="c-uos" data-field="nov_sales"><button type="button" class="st-th" data-sort="sales">Sales</button></th><th class="c-ton" data-field="sales_ton"><button type="button" class="st-th" data-sort="sales">Sales</button></th>
+          <th class="c-sar b-cif" data-field="avail_cif"><button type="button" class="st-th" data-sort="avail">Available</button></th><th class="c-sar b-dplc" data-field="avail_dplc"><button type="button" class="st-th" data-sort="avail">Available</button></th><th class="c-sar b-bptt" data-field="avail_bptt"><button type="button" class="st-th" data-sort="avail">Available</button></th><th class="c-uos" data-field="available"><button type="button" class="st-th" data-sort="avail">Available</button></th><th class="c-ton" data-field="avail_ton"><button type="button" class="st-th" data-sort="avail">Available</button></th>
+          <th class="c-sar b-cif" data-field="gap_cif"><button type="button" class="st-th" data-sort="gap">Gap</button></th><th class="c-sar b-dplc" data-field="gap_dplc"><button type="button" class="st-th" data-sort="gap">Gap</button></th><th class="c-sar b-bptt" data-field="gap_bptt"><button type="button" class="st-th" data-sort="gap">Gap</button></th><th class="c-uos" data-field="gap"><button type="button" class="st-th" data-sort="gap">Gap</button></th><th class="c-ton" data-field="gap_ton"><button type="button" class="st-th" data-sort="gap">Gap</button></th>
+          <th class="c-sar b-cif" data-field="excess_cif"><button type="button" class="st-th" data-sort="excess">Excess</button></th><th class="c-sar b-dplc" data-field="excess_dplc"><button type="button" class="st-th" data-sort="excess">Excess</button></th><th class="c-sar b-bptt" data-field="excess_bptt"><button type="button" class="st-th" data-sort="excess">Excess</button></th><th class="c-uos" data-field="excess"><button type="button" class="st-th" data-sort="excess">Excess</button></th><th class="c-ton" data-field="excess_ton"><button type="button" class="st-th" data-sort="excess">Excess</button></th>
           <th data-field="cover"><button type="button" class="st-th" data-sort="cover">Cover</button></th>
         </tr></thead>
         <tbody data-draw="sku-body"></tbody>
@@ -306,7 +305,7 @@
       <dt>Net gap</dt><dd>Gap + excess.</dd>
       <dt>Tons</dt><dd>UOS ÷ cases per ton (CPT) from your price file. SKUs without a CPT (target lines with no stock SKU, and BROOKEBOND TB KSA with CPT 0) count as 0 Tons.</dd>
       <dt>Cover</dt><dd>Available stock ÷ remaining target.</dd>
-      <dt>SAR values</dt><dd>UOS × the SKU's value per case on the basis you pick: Current value (the value list you shared first), CIF, DPLC or BPTT (LC per case, from the price file). Target lines with no stock SKU (HI 24X20 packs, Pukka Feel New and others) and Pukka After Dinner (not in the price file) have no value, so they count in UOS only.</dd>
+      <dt>SAR values</dt><dd>UOS × the SKU's value per case on the basis you pick: BPTT (default), CIF or DPLC (LC per case, from the price file). Target lines with no stock SKU (HI 24X20 packs, Pukka Feel New and others) and Pukka After Dinner (not in the price file) have no value, so they count in UOS only.</dd>
       <dt>Channel targets</dt><dd>From your Target by channel file (KA by customer, WS, RVS, OOH, VFM, Ecom, LSM, Convenience). Matcha DTTC, Inf After Meal and Inf Quiet Moments there are the SKU list’s Matcha 3P, Inf After Dinner and Inf Time to Chill. Unallocated = SKU target − channel targets (HI 24X20 packs).</dd>
       <dt>Nov sales</dt><dd>From the daily sales report (DSR), November invoice dates only, net of returns. DSR channels: Key Accounts = KA, HTS is counted under RVS, Wholesale = WS, Supermarket = LSM, Convinience = Convenience. KA customers: Panda Retail = Panda, Aswaq Abdullah Al Othaim = Othaim, Saudi Hypermarkets (Carrefour) = Oth MT.</dd>
       <dt>Left out</dt><dd>Lipton T&amp;I HTS Cups, removed at your request.</dd>
@@ -317,12 +316,12 @@
 <script>
   dash.calc('sku_view', {
     title: 'SKU stock vs remaining target',
-    description: 'Available stock, remaining target, gap and excess per SKU, in UOS, in Tons (UOS ÷ cases per ton) and in SAR on each value basis (current, CIF, DPLC, BPTT).',
+    description: 'Available stock, remaining target, gap and excess per SKU, in UOS, in Tons (UOS ÷ cases per ton) and in SAR on each value basis (BPTT, CIF, DPLC).',
     inputs: ['sku_inputs'],
     fn: (sku_inputs) => sku_inputs.map((r) => {
       const opening = Number(r.nov_opening) || 0, released = Number(r.nov_released) || 0, sales = Number(r.nov_sales) || 0;
       const target = Number(r.nov_target) || 0;
-      const prices = { cur: r.price_sar, cif: r.price_cif, dplc: r.price_dplc, bptt: r.price_bptt };
+      const prices = { bptt: r.price_bptt, cif: r.price_cif, dplc: r.price_dplc };
       const cpt = r.cpt ? Number(r.cpt) : null;
       const t = (x) => (cpt ? x / cpt : 0);
       const available = Math.max(0, opening + released - sales);
@@ -332,7 +331,7 @@
       const status = !r.stock_sku ? 'No stock SKU' : gap < -0.5 ? 'Shortage' : excess > 0.5 ? 'Excess – focus' : 'On target';
       const out = {
         sku: r.sku, brand: r.brand, stock_sku: r.stock_sku, status,
-        price_cur: r.price_sar == null ? null : Number(r.price_sar), price_cif: r.price_cif == null ? null : Number(r.price_cif),
+        price_cif: r.price_cif == null ? null : Number(r.price_cif),
         price_dplc: r.price_dplc == null ? null : Number(r.price_dplc), price_bptt: r.price_bptt == null ? null : Number(r.price_bptt),
         nov_opening: opening, nov_released: released, nov_sales: sales, nov_target: target,
         available, remaining_target: remaining, gap, excess, net: gap + excess,
@@ -361,13 +360,13 @@
         n_focus: rs.filter((r) => r.status === 'Excess – focus').length,
         target_uos, sales_uos, avail_uos: sum('available'), gap_uos: sum('gap'), excess_uos: sum('excess'), net_uos: sum('net'),
         achievement: target_uos > 0 ? sales_uos / target_uos : 0,
-        ...Object.fromEntries(['cur', 'cif', 'dplc', 'bptt', 'ton'].flatMap((b) => ['target', 'sales', 'avail', 'gap', 'excess', 'net'].map((m) => [m + '_' + b, sum(m + '_' + b)]))),
+        ...Object.fromEntries(['bptt', 'cif', 'dplc', 'ton'].flatMap((b) => ['target', 'sales', 'avail', 'gap', 'excess', 'net'].map((m) => [m + '_' + b, sum(m + '_' + b)]))),
       };
     }),
   });
 
 
-  const UNITS = ['uos', 'ton', 'cur', 'cif', 'dplc', 'bptt'];
+  const UNITS = ['uos', 'ton', 'bptt', 'cif', 'dplc'];
   dash.calc('channel_view', {
     title: 'Channel target by SKU',
     description: 'Each channel and KA customer target and Nov sales to date per SKU in cases, Tons and SAR on each value basis, with the SKU’s available stock; SKU target not assigned to a channel shows as Unallocated.',
@@ -387,7 +386,7 @@
       channel_sales.forEach((c) => { line(c.sku, c.channel, c.customer).sq += Number(c.sales_uos); });
       return [...lineMap.values()].filter((l) => bySku.has(l.sku)).map((l) => {
         const s = bySku.get(l.sku), q = l.q, sq = l.sq;
-        const f = { uos: 1, ton: s.cpt ? 1 / s.cpt : 0, cur: s.price_cur || 0, cif: s.price_cif || 0, dplc: s.price_dplc || 0, bptt: s.price_bptt || 0 };
+        const f = { uos: 1, ton: s.cpt ? 1 / s.cpt : 0, cif: s.price_cif || 0, dplc: s.price_dplc || 0, bptt: s.price_bptt || 0 };
         const out = { key: l.channel + '|' + l.customer + '|' + l.sku, sku: l.sku, brand: s.brand, channel: l.channel, customer: l.customer, status: s.status,
           share_of_sku: s.nov_target > 0 ? q / s.nov_target : null, achievement: q > 0 ? sq / q : null };
         Object.entries(f).forEach(([u, k]) => { out['target_' + u] = q * k; out['sales_' + u] = sq * k; out['avail_' + u] = u === 'uos' ? s.available : u === 'ton' ? s.avail_ton : s['avail_' + u]; });
@@ -406,7 +405,7 @@
         const rs = channel_view.filter((r) => brand === 'All' || r.brand === brand);
         const add = (level, name, sub, base) => {
           const row = { row_key: brand + '|' + level + '|' + name, brand, level, name, skus: new Set(sub.filter((r) => r.target_uos > 0.0001).map((r) => r.sku)).size };
-          ['uos', 'ton', 'cur', 'cif', 'dplc', 'bptt'].forEach((u) => {
+          ['uos', 'ton', 'bptt', 'cif', 'dplc'].forEach((u) => {
             const t = sub.reduce((a, r) => a + r['target_' + u], 0), b = base.reduce((a, r) => a + r['target_' + u], 0);
             row['target_' + u] = t; row['share_' + u] = b > 0 ? t / b : 0;
             row['sales_' + u] = sub.reduce((a, r) => a + r['sales_' + u], 0);
@@ -425,7 +424,7 @@
   window.stState = { sort: 'gap', dir: 1, q: '', cq: '' };
   const unitOf = () => dash.params().unit || 'sar';
   const brandOf = () => dash.params().brand || 'All';
-  const basisOf = () => dash.params().basis || 'cur';
+  const basisOf = () => { const b = dash.params().basis; return ['bptt', 'cif', 'dplc'].includes(b) ? b : 'bptt'; };
   const sfx = () => (unitOf() === 'sar' ? basisOf() : unitOf());
   const chPick = () => {
     const ch = dash.params().channel || 'All', cu = dash.params().customer || 'All';
@@ -477,7 +476,7 @@
     const u = unitOf();
     document.querySelectorAll('.st-unit').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.unit === u)));
     const bs = basisOf();
-    document.querySelectorAll('.st-table').forEach((t) => { ['sar', 'uos', 'ton'].forEach((x) => t.classList.toggle('u-' + x, u === x)); ['cur', 'cif', 'dplc', 'bptt'].forEach((b) => t.classList.toggle('b-' + b, b === bs)); });
+    document.querySelectorAll('.st-table').forEach((t) => { ['sar', 'uos', 'ton'].forEach((x) => t.classList.toggle('u-' + x, u === x)); ['bptt', 'cif', 'dplc'].forEach((b) => t.classList.toggle('b-' + b, b === bs)); });
     document.querySelectorAll('.st-basis').forEach((s) => { s.value = bs; s.disabled = u !== 'sar'; });
     document.querySelectorAll('.st-brand').forEach((s) => { s.value = brandOf(); });
     document.querySelectorAll('.st-status').forEach((s) => { s.value = dash.params().status || 'All'; });
@@ -572,7 +571,7 @@
       const tr = document.createElement('tr');
       cell(tr, r.brand); cell(tr, fmtNum(r.skus)); cell(tr, fmtNum(r.n_short)); cell(tr, fmtNum(r.n_focus));
       ['target', 'sales', 'avail', 'gap', 'excess', 'net'].forEach((m) => {
-        ['cur', 'cif', 'dplc', 'bptt', 'uos', 'ton'].forEach((u) => {
+        ['bptt', 'cif', 'dplc', 'uos', 'ton'].forEach((u) => {
           const x = r[m + '_' + u];
           cell(tr, u === 'ton' ? d3.format(',.1f')(x) : fmtNum(x), (u === 'uos' || u === 'ton' ? 'c-' + u : 'c-sar b-' + u) + (m === 'gap' && x < -0.5 ? ' st-neg' : m === 'excess' && x > 0.5 ? ' st-pos' : ''));
         });
@@ -648,7 +647,7 @@
       [['target', 'nov_target'], ['sales', 'nov_sales'], ['avail', 'available'], ['gap', 'gap'], ['excess', 'excess']].forEach(([s, q]) => {
         const neg = q === 'gap' && r[q] < -0.5, pos = q === 'excess' && r[q] > 0.5;
         const extra = neg ? ' st-neg' : pos ? ' st-pos' : '';
-        ['cur', 'cif', 'dplc', 'bptt'].forEach((b) => cell(tr, fmtNum(r[s + '_' + b]), 'c-sar b-' + b + extra));
+        ['bptt', 'cif', 'dplc'].forEach((b) => cell(tr, fmtNum(r[s + '_' + b]), 'c-sar b-' + b + extra));
         cell(tr, fmtNum(r[q]), 'c-uos' + extra);
         cell(tr, d3.format(',.1f')(r[s + '_ton']), 'c-ton' + extra);
       });
