@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nov Stock &amp; Gap Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400&display=swap">
+<style>
+  :root {
+    --color-bg: #f6f7f5; --color-panel: #ffffff; --color-fg: #1d2421; --color-fg-muted: #5d6762; --color-border-line: #dfe3e0;
+    --color-ok: #2e6b3f; --color-warn: #9a5b00; --color-bad: #b3261e;
+    --cds-chart-grid: #eceeec; --cds-chart-status-critical: #b3261e; --excess: #c27a12;
+    --font-anthropic-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    --font-anthropic-serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+    --cds-font-size-caption: 12px; --cds-font-size-body: 14px; --cds-font-size-heading: 16px; --cds-font-size-title: 26px; --cds-font-weight-medium: 500;
+    --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 12px; --cds-gap-lg: 20px;
+    --cds-pad-xs: 5px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 16px; --cds-radius: 6px; --cds-dur-slow: .3s;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --color-bg: #141917; --color-panel: #1c2320; --color-fg: #e8ecea; --color-fg-muted: #a2aca7; --color-border-line: #2f3834;
+      --color-ok: #7fc794; --color-warn: #f0b45a; --color-bad: #f2867c; --cds-chart-grid: #27302c; --cds-chart-status-critical: #f2867c; --excess: #e9a640; color-scheme: dark; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); font-size: 14px; line-height: 1.45; }
+  #dash-root { max-width: 1280px; margin: 0 auto; padding-block: 24px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .dash-select { font: inherit; font-size: 12px; padding: 5px 8px; border: 1px solid var(--color-border-line); border-radius: 6px; background-color: var(--color-panel); color: var(--color-fg); }
+  .dash-select:disabled { opacity: .5; }
+  .st-asof { margin: 0; font-size: 12px; color: var(--color-fg-muted); }
+</style>
+<script id="sku-data" type="application/json">[{"sku": "LIPTON EXS BLK ENG BRKFST EKT 6X25X2G", "brand": "Lipton", "stock_sku": "LIPTON EXS BLK ENG BRKFST EKT 6X25X2G", "nov_opening": 62, "nov_released": 0, "nov_sales": 0, "nov_target": 312, "price_sar": 68, "price_bptt": 84.9854, "price_dplc": 72.2376, "price_cif": 68.1487, "cpt": 2777.778}, {"sku": "LIPTON MATCHA PURE DTTC 3P 16X20X1.5G", "brand": "Lipton", "stock_sku": "LIPTON MATCHA PURE 16X20X1 5G", "nov_opening": 358.62, "nov_released": 0, "nov_sales": 0.813, "nov_target": 227, "price_sar": 211, "price_bptt": 173.913, "price_dplc": 147.8261, "price_cif": 147.8261, "cpt": 2083.333}, {"sku": "LIPTON TUMERIC DTTC 3P 16X20X2G", "brand": "Lipton", "stock_sku": "", "nov_opening": 0, "nov_released": 0, "nov_sales": 0, "nov_target": 0, "price_sar": null, "price_bptt": null, "price_dplc": null, "price_cif": null, "cpt": null}, {"sku": "LIPTON INF AFTER DINNER 16X20X1.5G", "brand": "Lipton", "stock_sku": "LIPTON Inf After Meal 16x20x1 5g", "nov_opening": 15.12, "nov_released": 0, "nov_sales": -1.0, "nov_target": 260, "price_sar": 211, "price_bptt": 173.913, "price_dplc": 147.8261, "price_cif": 140.7867, "cpt": 2083.333}, {"sku": "LIPTON INF SWEET NIGHTS 16X20X1.5G", "brand": "Lipton", "stock_sku": "LIPTON Inf Sweet Night 16x20x1 5g", "nov_opening": 28.62, "nov_released": 0, "nov_sales": -1.0, "nov_target": 275, "price_sar": 211, "price_bptt": 173.913, "price_dplc": 147.8261, "price_cif": 140.7867, "cpt": 2083.333}, {"sku": "LIPTON INF TIME TO CHILL 16X20X1.5G", "brand": "Lipton", "stock_sku": "LIPTON Inf Quiet Moments 16x20x1 5g", "nov_opening": 2.81, "nov_released": 0, "nov_sales": 0, "nov_target": 445, "price_sar": 211, "price_bptt": 173.913, "price_dplc": 147.8261, "price_cif": 140.7867, "cpt": 2083.333}, {"sku": "LIPTON GET FIT 16X20X1.5G", "brand": "Lipton", "stock_sku": "", "nov_opening": 0, "nov_released": 0, "nov_sales": 0, "nov_target": 0, "price_sar": null, "price_bptt": null, "price_dplc": null, "price_cif": null, "cpt": null}, {"sku": "LIPTON YLTP EKT 2X5KG", "brand": "Lipton", "stock_sku": "LIPTON YLTP CTC 2X5KG", "nov_opening": 3431, "nov_released": 0, "nov_sales": 9.0, "nov_target": 3866, "price_sar": 166, "price_bptt": 207.0205, "price_dplc": 175.9674, "price_cif": 166.007, "cpt": 100}, {"sku": "BROOKEBOND RLTP CHARGE ROLL EKT2X5KG", "brand": "Brooke Bond", "stock_sku": "BROOKEBOND RLTP CHARGE ROLL EKT2X5KG", "nov_opening": 2625.5, "nov_released": 0, "nov_sales": 1.0, "nov_target": 1644, "price_sar": 145, "price_bptt": 180.9801, "price_dplc": 153.8331, "price_cif": 145.1255, "cpt": 100}, {"sku": "LIPTON(HI) LEMN&GINER DTTC EKT16X20X1.6G", "brand": "Lipton", "stock_sku": "LIPTON(HI) LEMN GINER DTTC EKT16X20X1 6G", "nov_opening": 356.26, "nov_released": 0, "nov_sales": 23.626, "nov_target": 309, "price_sar": 139, "price_bptt": 173.913, "price_dplc": 147.8261, "price_cif": 139.4586, "cpt": 1953.125}, {"sku": "LIPTON (HI)ANISESEED DTTC EKT 16X20X1.6G", "brand": "Lipton", "stock_sku": "LIPTON (HI)ANISESEED DTTC EKT 16X20X1 6G", "nov_opening": 206.89, "nov_released": 0, "nov_sales": 15.251, "nov_target": 376, "price_sar": 141, "price_bptt": 173.913, "price_dplc": 147.8261, "price_cif": 140.7867, "cpt": 1953.13}, {"sku": "LIPTON (HI) CAMOMILE DTTC EKT 16X20X1.0G", "brand": "Lipton", "stock_sku": "LIPTON (HI) CAMOMILE DTTC EKT 16X20X1 0G", "nov_opening": 698.71, "nov_released": 0, "nov_sales": 32.753, "nov_target": 943, "price_sar": 141, "price_bptt": 173.913, "price_dplc": 147.8261, "price_cif": 140.7867, "cpt": 3125}, {"sku": "LIPTON (HI) HIBISCUS DTTC EKT 16X20X2G", "brand": "Lipton", "stock_sku": "LIPTON (HI) HIBISCUS DTTC EKT 16X20X2G", "nov_opening": 0, "nov_released": 0, "nov_sales": 2.063, "nov_target": 385, "price_sar": 141, "price_bptt": 173.913, "price_dplc": 147.8261, "price_cif": 140.7867, "cpt": 1562.5}, {"sku": "LIPTON (HI)PEPERMINT DTTC EKT 16X20X1.8G", "brand": "Lipton", "stock_sku": "LIPTON (HI)PEPERMINT DTTC EKT 16X20X1 8G", "nov_opening": 363.67, "nov_released": 0, "nov_sales": 4.814, "nov_target": 199, "price_sar": 141, "price_bptt": 173.913, "price_dplc": 147.8261, "price_cif": 140.7867, "cpt": 1736.11}, {"sku": "LIPTON ENG BREAKFAST FNX EKT16X20X2G", "brand": "Lipton", "stock_sku": "LIPTON Eng Breakfast Fenix EKT 16x20x2g", "nov_opening": 372, "nov_released": 0, "nov_sales": 0, "nov_target": 165, "price_sar": 95, "price_bptt": 117.99, "price_dplc": 100.2915, "price_cif": 94.6146, "cpt": 3333.333333}, {"sku": "LIPTON GREENTEA PURE FNX EKT16X20X1.5G", "brand": "Lipton", "stock_sku": "LIPTON GREENTEA PURE FNX EKT16X20X1 5G", "nov_opening": 1771, "nov_released": 0, "nov_sales": 0, "nov_target": 869, "price_sar": 101, "price_bptt": 118.405, "price_dplc": 100.6443, "price_cif": 100.6443, "cpt": 2083.333}, {"sku": "LIPTON YELLOW LABEL UFS FNX EKT16X20X2G", "brand": "Lipton", "stock_sku": "LIPTON Yellow Label UFS Fnx EKT 16x20x2g", "nov_opening": 526, "nov_released": 0, "nov_sales": 0, "nov_target": 1159, "price_sar": 95, "price_bptt": 117.9933, "price_dplc": 100.2943, "price_cif": 94.6173, "cpt": 1562.5}, {"sku": "LIPTON GREENTEA MINT FNX EKT 16X20X1.5G", "brand": "Lipton", "stock_sku": "LIPTON GREENTEA MINT FNX EKT 16X20X1 3G", "nov_opening": 1757, "nov_released": 0, "nov_sales": 0, "nov_target": 410, "price_sar": 101, "price_bptt": 118.405, "price_dplc": 100.6443, "price_cif": 100.6443, "cpt": 2083.333}, {"sku": "LIPTON CAMOMILE UFS FNX EKT16X20X1.0G", "brand": "Lipton", "stock_sku": "LIPTON CAMOMILE UFS FNX EKT16X20X1 0G", "nov_opening": 175, "nov_released": 0, "nov_sales": 0, "nov_target": 20, "price_sar": 125, "price_bptt": 155.0027, "price_dplc": 131.7523, "price_cif": 125.4784, "cpt": 3125}, {"sku": "LIPTON LEMONGINGER FNX EKT16X20X1.6G", "brand": "Lipton", "stock_sku": "", "nov_opening": 0, "nov_released": 0, "nov_sales": 0, "nov_target": 0, "price_sar": null, "price_bptt": null, "price_dplc": null, "price_cif": null, "cpt": null}, {"sku": "LIPTON TB ENG BRKFST ENV EKT 24X25X2G", "brand": "Lipton", "stock_sku": "LIPTON TB ENG BRKFST ENV EKT 24X25X2G", "nov_opening": 100, "nov_released": 0, "nov_sales": 0, "nov_target": 48, "price_sar": 165, "price_bptt": 205.92, "price_dplc": 175.032, "price_cif": 165.1245, "cpt": 833.3333}, {"sku": "LIPTON TB EARL GREY ENV EKT 24X25X1.5G", "brand": "Lipton", "stock_sku": "LIPTON TB EARL GREY ENV EKT 24X25X1 5G", "nov_opening": 37, "nov_released": 0, "nov_sales": 0, "nov_target": 48, "price_sar": 165, "price_bptt": 205.92, "price_dplc": 175.032, "price_cif": 165.1245, "cpt": 1111.111}, {"sku": "LIPTON TB ENG BRKFST ENV EKT 12X50X2G", "brand": "Lipton", "stock_sku": "LIPTON TB ENG BRKFST ENV EKT 12X50X2G", "nov_opening": 350, "nov_released": 0, "nov_sales": 0, "nov_target": 119, "price_sar": 139, "price_bptt": 173.0456, "price_dplc": 147.0888, "price_cif": 138.763, "cpt": 833.3333}, {"sku": "LIPTON TB EARL GREY ENV EKT 12X50X1.5G", "brand": "Lipton", "stock_sku": "LIPTON TB EARL GREY ENV EKT 12X50X1 5G", "nov_opening": 2, "nov_released": 0, "nov_sales": 0, "nov_target": 119, "price_sar": 139, "price_bptt": 173.0456, "price_dplc": 147.0888, "price_cif": 138.763, "cpt": 1111.111}, {"sku": "LIPTON EXS INF CHAMOMIL EKT 6X25X1.3G", "brand": "Lipton", "stock_sku": "LIPTON EXS INF CHAMOMIL EKT 6X25X1 3G", "nov_opening": 53, "nov_released": 0, "nov_sales": 0, "nov_target": 6, "price_sar": 68, "price_bptt": 84.9854, "price_dplc": 72.2376, "price_cif": 68.1487, "cpt": 5128.205128205128}, {"sku": "LIPTON EXS GREEN SENCHA EKT 6X25X1.8G", "brand": "Lipton", "stock_sku": "LIPTON EXS GREEN SENCHA EKT 6X25X1 8G", "nov_opening": 60, "nov_released": 0, "nov_sales": 0, "nov_target": 110, "price_sar": 72, "price_bptt": 84.9854, "price_dplc": 72.2376, "price_cif": 72.2376, "cpt": 3703.703703703704}, {"sku": "LIPTON EXS BLACK EARLGREY EKT 6X25X1.8G", "brand": "Lipton", "stock_sku": "LIPTON EXS BLACK EARLGREY EKT 6X25X1 8G", "nov_opening": 126, "nov_released": 0, "nov_sales": 0, "nov_target": 15, "price_sar": 68, "price_bptt": 84.9854, "price_dplc": 72.2376, "price_cif": 68.1487, "cpt": 3703.703703703704}, {"sku": "LIPTON EXS GRN INTENSE MINT EKT 6X25X2G", "brand": "Lipton", "stock_sku": "LIPTON EXS GRN INTENSE MINT EKT 6X25X2G", "nov_opening": 137, "nov_released": 0, "nov_sales": 0, "nov_target": 20, "price_sar": 72, "price_bptt": 84.9854, "price_dplc": 72.2376, "price_cif": 72.2376, "cpt": 3333.33}, {"sku": "LIPTON GT PUR ENV  THOR 24X25X1.5G", "brand": "Lipton", "stock_sku": "LIPTON GT PUR ENV EKT THOR 24X25X1 5G", "nov_opening": 0, "nov_released": 0, "nov_sales": 0.083, "nov_target": 346, "price_sar": 192, "price_bptt": 226, "price_dplc": 192.1, "price_cif": 192.1, "cpt": 1282.051}, {"sku": "LIPTON GT LEM ENV  THOR 24X25X1.3G", "brand": "Lipton", "stock_sku": "LIPTON GT LEM ENV EKT THOR 24X25X1 3G", "nov_opening": 323.55, "nov_released": 0, "nov_sales": 3.876, "nov_target": 263, "price_sar": 192, "price_bptt": 226, "price_dplc": 192.1, "price_cif": 192.1, "cpt": 1282.051}, {"sku": "LIPTON GT MIN ENV  THOR24X25X1.3G", "brand": "Lipton", "stock_sku": "LIPTON GT MIN ENV EKT THOR24X25X1 3G", "nov_opening": 17.46, "nov_released": 0, "nov_sales": 1.375, "nov_target": 305, "price_sar": 112, "price_bptt": 226, "price_dplc": 192.1, "price_cif": 192.1, "cpt": 1282}, {"sku": "LIPTON GT PUR ENV  THOR 12X50X1.5G", "brand": "Lipton", "stock_sku": "LIPTON GT PUR ENV EKT THOR 12X50X1 5G", "nov_opening": 207.33, "nov_released": 0, "nov_sales": 24.0, "nov_target": 717, "price_sar": 173, "price_bptt": 203.4, "price_dplc": 172.89, "price_cif": 172.89, "cpt": 1282.051}, {"sku": "LIPTON GT LEM ENV  THOR 12X50X1.3G", "brand": "Lipton", "stock_sku": "LIPTON GT LEM ENV EKT THOR 12X50X1 3G", "nov_opening": 43.67, "nov_released": 0, "nov_sales": 0, "nov_target": 427, "price_sar": 173, "price_bptt": 203.4, "price_dplc": 172.89, "price_cif": 172.89, "cpt": 1282.051}, {"sku": "LIPTON GT MIN ENV  THOR12X50X1.3G", "brand": "Lipton", "stock_sku": "LIPTON GT MIN ENV EKT THOR12X50X1 3G", "nov_opening": 3.42, "nov_released": 0, "nov_sales": 0, "nov_target": 488, "price_sar": 173, "price_bptt": 203.4, "price_dplc": 172.89, "price_cif": 172.89, "cpt": 1282}, {"sku": "BROOKEBOND TP LAAL 24X400G", "brand": "Brooke Bond", "stock_sku": "BROOKEBOND RLTP ASIAN ROLL EKT24X400G", "nov_opening": 1050.65, "nov_released": 0, "nov_sales": 34.0, "nov_target": 820, "price_sar": 300, "price_bptt": 374.0073, "price_dplc": 317.9062, "price_cif": 299.9115, "cpt": 104.17}, {"sku": "LIPTON YLTB CATERING 555 36X100X2G", "brand": "Lipton", "stock_sku": "LIPTON YLTB CATERING 555 36X100X2G", "nov_opening": 5102.34, "nov_released": 0, "nov_sales": 2.25, "nov_target": 8658, "price_sar": 289, "price_bptt": 360.0186, "price_dplc": 306.0158, "price_cif": 288.6942, "cpt": 138.8888}, {"sku": "LIPTON YLTB FRESH 555 16X200X2G", "brand": "Lipton", "stock_sku": "LIPTON YLTB FRESH 555 16X200X2G", "nov_opening": 1174.1, "nov_released": 0, "nov_sales": -8.874, "nov_target": 3250, "price_sar": 409, "price_bptt": 510.0, "price_dplc": 433.5, "price_cif": 408.9623, "cpt": 156.25}, {"sku": "LIPTON YLTB FRESH 555 36X100X2G", "brand": "Lipton", "stock_sku": "LIPTON YLTB FRESH 555 36X100X2G", "nov_opening": 384, "nov_released": 0, "nov_sales": 0, "nov_target": 5230, "price_sar": 460, "price_bptt": 574.27, "price_dplc": 488.1295, "price_cif": 460.4995, "cpt": 138.8888}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "brand": "Lipton", "stock_sku": "LIPTON YLTB CADDY 555 24X25X2G", "nov_opening": 0, "nov_released": 0, "nov_sales": 27.672, "nov_target": 9553, "price_sar": 117, "price_bptt": 145.9692, "price_dplc": 124.0738, "price_cif": 117.0508, "cpt": 833.3333}, {"sku": "LIPTON YLTB ENV 555 24X100X2G", "brand": "Lipton", "stock_sku": "LIPTON YLTB ENV 555 24X100X2G", "nov_opening": 87, "nov_released": 0, "nov_sales": 0, "nov_target": 628, "price_sar": 374, "price_bptt": 466.1942, "price_dplc": 396.2651, "price_cif": 373.835, "cpt": 208.33}, {"sku": "LIPTON YLTP Y23 48X200G", "brand": "Lipton", "stock_sku": "LIPTON YLTP Y23 48X200G", "nov_opening": 6030.81, "nov_released": 0, "nov_sales": 10.608, "nov_target": 3017, "price_sar": 349, "price_bptt": 435.0204, "price_dplc": 369.7673, "price_cif": 348.8371, "cpt": 104.1666}, {"sku": "LIPTON YLTP Y23 12X800G", "brand": "Lipton", "stock_sku": "LIPTON YLTP Y23 12X800G", "nov_opening": 5188.76, "nov_released": 0, "nov_sales": 6.581, "nov_target": 4095, "price_sar": 326, "price_bptt": 405.9815, "price_dplc": 345.0842, "price_cif": 325.5512, "cpt": 104.1666}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "brand": "Lipton", "stock_sku": "LIPTON YLTP KSA Y23 50X100G", "nov_opening": 1923.32, "nov_released": 0, "nov_sales": 18.92, "nov_target": 4546, "price_sar": 174, "price_bptt": 217.0344, "price_dplc": 184.4792, "price_cif": 174.037, "cpt": 200}, {"sku": "LIPTON YLTP Y23 24X400G", "brand": "Lipton", "stock_sku": "LIPTON YLTP Y23 24X400G", "nov_opening": 3400.16, "nov_released": 0, "nov_sales": 15.044, "nov_target": 5340, "price_sar": 347, "price_bptt": 433.024, "price_dplc": 368.0704, "price_cif": 347.2363, "cpt": 104.1666}, {"sku": "BROOKEBOND TB LAAL KSA 12X100X2G", "brand": "Brooke Bond", "stock_sku": "BROOKEBOND TB KSA 12X100X2G", "nov_opening": 0, "nov_released": 0, "nov_sales": 0, "nov_target": 0, "price_sar": 0, "price_bptt": 143.982, "price_dplc": 122.3847, "price_cif": 115.4573, "cpt": null}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "brand": "Brooke Bond", "stock_sku": "BROOKEBOND TB LAAL 36X100X2G", "nov_opening": 1771.67, "nov_released": 0, "nov_sales": 73.416, "nov_target": 9020, "price_sar": 346, "price_bptt": 432, "price_dplc": 367.2, "price_cif": 346.4151, "cpt": 138.889}, {"sku": "LIPTON GTB MIN Y24 12X100X1.5G", "brand": "Lipton", "stock_sku": "", "nov_opening": 0, "nov_released": 0, "nov_sales": 0, "nov_target": 0, "price_sar": null, "price_bptt": null, "price_dplc": null, "price_cif": null, "cpt": null}, {"sku": "LIPTON GTB PUR Y24 12X100X1.5G", "brand": "Lipton", "stock_sku": "", "nov_opening": 0, "nov_released": 0, "nov_sales": 0, "nov_target": 0, "price_sar": null, "price_bptt": null, "price_dplc": null, "price_cif": null, "cpt": null}, {"sku": "LIPTON GTB FRESHNESS MINT 12X100X1.3G", "brand": "Lipton", "stock_sku": "LIPTON GTB FRESHNESS MINT 12X100X1 3G", "nov_opening": 0, "nov_released": 0, "nov_sales": -0.5, "nov_target": 1170, "price_sar": 221, "price_bptt": 259.6958, "price_dplc": 220.7414, "price_cif": 220.7414, "cpt": 641.03}, {"sku": "LIPTON GTB FRESHNESS PURE 12X100X1.5G", "brand": "Lipton", "stock_sku": "LIPTON GTB FRESHNESS PURE 12X100X1 5G", "nov_opening": 0, "nov_released": 0, "nov_sales": 2.083, "nov_target": 4099, "price_sar": 221, "price_bptt": 259.6958, "price_dplc": 220.7414, "price_cif": 220.7414, "cpt": 555.5555555555555}, {"sku": "BROOKEBOND TP LAAL 48X200G", "brand": "Brooke Bond", "stock_sku": "BROOKEBOND TP LAAL 48X200G", "nov_opening": 204.32, "nov_released": 0, "nov_sales": 1.543, "nov_target": 186, "price_sar": 300, "price_bptt": 373.9969, "price_dplc": 317.8974, "price_cif": 299.9032, "cpt": 104.17}, {"sku": "BROOKEBOND TP LAAL 12X800G", "brand": "Brooke Bond", "stock_sku": "BROOKEBOND TP LAAL 12X800G", "nov_opening": 539.42, "nov_released": 0, "nov_sales": 0.5, "nov_target": 270, "price_sar": 281, "price_bptt": 349.9979, "price_dplc": 297.4982, "price_cif": 280.6587, "cpt": 104.1666}, {"sku": "LIPTON GTB LEM EKT 12X100X1.5G promo", "brand": "Lipton", "stock_sku": "LIPTON GTB FRESHNESS LEMON 12X100X1 3G", "nov_opening": 19.92, "nov_released": 0, "nov_sales": 1.167, "nov_target": 810, "price_sar": 221, "price_bptt": 259.6958, "price_dplc": 220.7414, "price_cif": 220.7414, "cpt": 641.03}, {"sku": "BROOKEBOND TP 6x1.6KG", "brand": "Brooke Bond", "stock_sku": "BROOKEBOND TP 6x1 6kg", "nov_opening": 875.17, "nov_released": 0, "nov_sales": 1.0, "nov_target": 350, "price_sar": 272, "price_bptt": 339.1991, "price_dplc": 288.3192, "price_cif": 271.9992, "cpt": 104.167}, {"sku": "LIPTON Yellow label TP  6X1.6KG", "brand": "Lipton", "stock_sku": "LIPTON Yellow label TP  6X1 6kg", "nov_opening": 750.33, "nov_released": 0, "nov_sales": 1.0, "nov_target": 150, "price_sar": 320, "price_bptt": 399.067, "price_dplc": 339.2069, "price_cif": 320.0065, "cpt": 104.167}, {"sku": "LIPTON YLTB FRESH 555 24X100X2G", "brand": "Lipton", "stock_sku": "LIPTON YLTB FRESH 555 24X100X2G", "nov_opening": 491.95, "nov_released": 0, "nov_sales": -0.083, "nov_target": 15279, "price_sar": 230, "price_bptt": 287.2099, "price_dplc": 244.1284, "price_cif": 230.3098, "cpt": 208.33}, {"sku": "PUKKA LEMN GINGR&MANKA HNY TB SEL4X20X2G", "brand": "Pukka", "stock_sku": "PUKKA Org LemGng MHon SEL 4x20x1 7G", "nov_opening": 24, "nov_released": 0, "nov_sales": 0, "nov_target": 85, "price_sar": 68, "price_bptt": 84.6881, "price_dplc": 71.9849, "price_cif": 67.9103, "cpt": 6250}, {"sku": "PUKKA THREE GINGER TB SEL 4X20X1.8G", "brand": "Pukka", "stock_sku": "PUKKA Three Ginger TB SEL 4X20X1 8g", "nov_opening": 0, "nov_released": 0, "nov_sales": 0, "nov_target": 45, "price_sar": 68, "price_bptt": 84.6881, "price_dplc": 71.9849, "price_cif": 67.9103, "cpt": 6944.444}, {"sku": "PUKKA SUPREM MATCHA GREN TB SEL4X20X1.5G", "brand": "Pukka", "stock_sku": "PUKKA ORG SUPRME MATCHA GRN SL 4X20X1 5G", "nov_opening": 1229, "nov_released": 0, "nov_sales": 0, "nov_target": 290, "price_sar": 68, "price_bptt": 84.6881, "price_dplc": 71.9849, "price_cif": 71.9849, "cpt": 8333.333}, {"sku": "Pukka BonBon Box Sel 8X30", "brand": "Pukka", "stock_sku": "Pukka BonBon Box Sel 8X30", "nov_opening": 111, "nov_released": 0, "nov_sales": 0, "nov_target": 0, "price_sar": 204, "price_bptt": 254.0705, "price_dplc": 215.96, "price_cif": 203.7358, "cpt": 2500}, {"sku": "PUKKA FEEL NEW TB SEL 4X20X2G", "brand": "Pukka", "stock_sku": "Pukka After Dinner 4X20X2g", "nov_opening": 8, "nov_released": 0, "nov_sales": 0, "nov_target": 290, "price_sar": 68, "price_bptt": 84.6881, "price_dplc": 71.9849, "price_cif": 67.9103, "cpt": 6250}, {"sku": "PUKKA CHAM,VANI&MANK HNY TB(SL)4X20X1.6G", "brand": "Pukka", "stock_sku": "PUKKA CHAM VANI MANK HNY TB(SL)4X20X1 6G", "nov_opening": 0, "nov_released": 0, "nov_sales": 0, "nov_target": 420, "price_sar": 68, "price_bptt": 84.6881, "price_dplc": 71.9849, "price_cif": 67.9103, "cpt": 7812.5}, {"sku": "PUKKA THREE MINT TB SEL 4X20X1.6G", "brand": "Pukka", "stock_sku": "PUKKA Three Mint TB SEL 4X20X1 6g", "nov_opening": 10, "nov_released": 0, "nov_sales": 0, "nov_target": 80, "price_sar": 68, "price_bptt": 84.6881, "price_dplc": 71.9849, "price_cif": 68.5571, "cpt": 7812.5}, {"sku": "Pukka Org Morning berry SEL 4x20x1.7g", "brand": "Pukka", "stock_sku": "Pukka Org Morning berry SEL 4x20x1 7g", "nov_opening": 161, "nov_released": 0, "nov_sales": 96.0, "nov_target": 370, "price_sar": 68, "price_bptt": 84.6881, "price_dplc": 71.9849, "price_cif": 67.9103, "cpt": 7812.5}, {"sku": "Pukka Org Night time berry SEL 4x20x1.6g", "brand": "Pukka", "stock_sku": "Pukka Org Night time berry SEL 4x20x1 6g", "nov_opening": 0, "nov_released": 0, "nov_sales": 0, "nov_target": 470, "price_sar": 68, "price_bptt": 84.6881, "price_dplc": 71.9849, "price_cif": 67.9103, "cpt": 6944.444}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "brand": "Lipton", "stock_sku": "LIPTON ESTB O2  36X100X2 2G", "nov_opening": 76.74, "nov_released": 0, "nov_sales": 15.864, "nov_target": 1130, "price_sar": 368, "price_bptt": 458.4, "price_dplc": 389.64, "price_cif": 367.5849, "cpt": 126.26}, {"sku": "BROOKEBOND JAR LAAL 3P 12X370G", "brand": "Brooke Bond", "stock_sku": "BROOKBOND RLTP SQR JAR DTTC EKT 12X370G", "nov_opening": 124.59, "nov_released": 0, "nov_sales": -4.25, "nov_target": 415, "price_sar": 120, "price_bptt": 149.7165, "price_dplc": 127.259, "price_cif": 120.0557, "cpt": 225.23}, {"sku": "LIPTON YLTP TP TWPK 12X(400+400)G", "brand": "Lipton", "stock_sku": "LIPTON YLTP TP TWPK 12X(400+400)G", "nov_opening": 32, "nov_released": 0, "nov_sales": 0, "nov_target": 760, "price_sar": 203, "price_bptt": 253.6107, "price_dplc": 215.5691, "price_cif": 203.3671, "cpt": 104.17}, {"sku": "BROOKEBOND TP TWPK 12X(400+400)G", "brand": "Brooke Bond", "stock_sku": "BROOKEBOND TP TWPK 12X(400+400)G", "nov_opening": 1, "nov_released": 0, "nov_sales": 0, "nov_target": 0, "price_sar": 182, "price_bptt": 226.3895, "price_dplc": 192.4311, "price_cif": 181.5388, "cpt": 104.167}, {"sku": "BROOKEBOND TB SPECIAL 18X100X2G", "brand": "Brooke Bond", "stock_sku": "BROOKEBOND TB EXCLUSIVE PACK 18X100X2G", "nov_opening": 6466.73, "nov_released": 0, "nov_sales": 0, "nov_target": 12865, "price_sar": 87, "price_bptt": 108, "price_dplc": 91.8, "price_cif": 86.6038, "cpt": 277.778}, {"sku": "LIPTON GTB PUR SEN UT 24X25X1.5G", "brand": "Lipton", "stock_sku": "LIPTON GTB PUR SEN UT 24X25X1.5G", "nov_opening": 413, "nov_released": 0, "nov_sales": 0, "nov_target": 1130, "price_sar": 112, "price_bptt": 132.1765, "price_dplc": 112.35, "price_cif": 112.35, "cpt": 1111}, {"sku": "LIPTON GTB LEM SEN UT 24X25X1.3G", "brand": "Lipton", "stock_sku": "LIPTON GTB LEM SEN UT 24X25X1.3G", "nov_opening": 342, "nov_released": 0, "nov_sales": 0, "nov_target": 520, "price_sar": 112, "price_bptt": 132.1765, "price_dplc": 112.35, "price_cif": 112.35, "cpt": 1282}, {"sku": "LIPTON GTB MIN SEN UT 24X25X1.3G", "brand": "Lipton", "stock_sku": "LIPTON GTB MIN SEN UT 24X25X1.3G", "nov_opening": 825, "nov_released": 0, "nov_sales": 0, "nov_target": 520, "price_sar": 112, "price_bptt": 132.1765, "price_dplc": 112.35, "price_cif": 112.35, "cpt": 1282}, {"sku": "LIPTON YLTB FRESH 555 PROMO 16X240X2G", "brand": "Lipton", "stock_sku": "LIPTON YLTB Fresh 555 Promo 16x240x2g", "nov_opening": 0, "nov_released": 0, "nov_sales": 14.375, "nov_target": 6850, "price_sar": 269, "price_bptt": 336.0, "price_dplc": 285.6, "price_cif": 269.434, "cpt": 130.21}, {"sku": "LIPTON(HI) LEMON&GINGER 24X20X1.6G", "brand": "Lipton", "stock_sku": "", "nov_opening": 0, "nov_released": 0, "nov_sales": 0, "nov_target": 240, "price_sar": null, "price_bptt": null, "price_dplc": null, "price_cif": null, "cpt": null}, {"sku": "LIPTON (HI)ANISESEED 24X20X1.6G", "brand": "Lipton", "stock_sku": "", "nov_opening": 0, "nov_released": 0, "nov_sales": 0, "nov_target": 273, "price_sar": null, "price_bptt": null, "price_dplc": null, "price_cif": null, "cpt": null}, {"sku": "LIPTON (HI) CAMOMILE 24X20X1.0G", "brand": "Lipton", "stock_sku": "", "nov_opening": 0, "nov_released": 0, "nov_sales": 0, "nov_target": 427, "price_sar": null, "price_bptt": null, "price_dplc": null, "price_cif": null, "cpt": null}, {"sku": "LIPTON (HI) HIBISCUS 24X20X2G", "brand": "Lipton", "stock_sku": "", "nov_opening": 0, "nov_released": 0, "nov_sales": 0, "nov_target": 207, "price_sar": null, "price_bptt": null, "price_dplc": null, "price_cif": null, "cpt": null}, {"sku": "LIPTON (HI)PEPERMINT 24X20X1.8G", "brand": "Lipton", "stock_sku": "", "nov_opening": 0, "nov_released": 0, "nov_sales": 0, "nov_target": 93, "price_sar": null, "price_bptt": null, "price_dplc": null, "price_cif": null, "cpt": null}]</script>
+<script id="channel-data" type="application/json">[{"sku": "LIPTON MATCHA PURE DTTC 3P 16X20X1.5G", "channel": "KA", "customer": "Panda", "target_uos": 46.0}, {"sku": "LIPTON INF AFTER DINNER 16X20X1.5G", "channel": "KA", "customer": "Panda", "target_uos": 47.0}, {"sku": "LIPTON INF SWEET NIGHTS 16X20X1.5G", "channel": "KA", "customer": "Panda", "target_uos": 47.0}, {"sku": "LIPTON INF TIME TO CHILL 16X20X1.5G", "channel": "KA", "customer": "Panda", "target_uos": 46.0}, {"sku": "LIPTON(HI) LEMN&GINER DTTC EKT16X20X1.6G", "channel": "KA", "customer": "Panda", "target_uos": 91.0}, {"sku": "LIPTON (HI)ANISESEED DTTC EKT 16X20X1.6G", "channel": "KA", "customer": "Panda", "target_uos": 153.0}, {"sku": "LIPTON (HI) CAMOMILE DTTC EKT 16X20X1.0G", "channel": "KA", "customer": "Panda", "target_uos": 329.0}, {"sku": "LIPTON (HI) HIBISCUS DTTC EKT 16X20X2G", "channel": "KA", "customer": "Panda", "target_uos": 133.0}, {"sku": "LIPTON (HI)PEPERMINT DTTC EKT 16X20X1.8G", "channel": "KA", "customer": "Panda", "target_uos": 25.0}, {"sku": "LIPTON TB ENG BRKFST ENV EKT 24X25X2G", "channel": "KA", "customer": "Panda", "target_uos": 9.0}, {"sku": "LIPTON TB EARL GREY ENV EKT 24X25X1.5G", "channel": "KA", "customer": "Panda", "target_uos": 9.0}, {"sku": "LIPTON TB ENG BRKFST ENV EKT 12X50X2G", "channel": "KA", "customer": "Panda", "target_uos": 25.0}, {"sku": "LIPTON TB EARL GREY ENV EKT 12X50X1.5G", "channel": "KA", "customer": "Panda", "target_uos": 25.0}, {"sku": "LIPTON GT PUR ENV  THOR 24X25X1.5G", "channel": "KA", "customer": "Panda", "target_uos": 62.0}, {"sku": "LIPTON GT LEM ENV  THOR 24X25X1.3G", "channel": "KA", "customer": "Panda", "target_uos": 62.0}, {"sku": "LIPTON GT MIN ENV  THOR24X25X1.3G", "channel": "KA", "customer": "Panda", "target_uos": 84.0}, {"sku": "LIPTON GT PUR ENV  THOR 12X50X1.5G", "channel": "KA", "customer": "Panda", "target_uos": 153.0}, {"sku": "LIPTON GT LEM ENV  THOR 12X50X1.3G", "channel": "KA", "customer": "Panda", "target_uos": 115.0}, {"sku": "LIPTON GT MIN ENV  THOR12X50X1.3G", "channel": "KA", "customer": "Panda", "target_uos": 115.0}, {"sku": "BROOKEBOND TP LAAL 24X400G", "channel": "KA", "customer": "Panda", "target_uos": 104.0}, {"sku": "LIPTON YLTB FRESH 555 36X100X2G", "channel": "KA", "customer": "Panda", "target_uos": 944.2857}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "channel": "KA", "customer": "Panda", "target_uos": 167.0}, {"sku": "LIPTON YLTP Y23 48X200G", "channel": "KA", "customer": "Panda", "target_uos": 96.0}, {"sku": "LIPTON YLTP Y23 12X800G", "channel": "KA", "customer": "Panda", "target_uos": 806.0}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "channel": "KA", "customer": "Panda", "target_uos": 18.0}, {"sku": "LIPTON YLTP Y23 24X400G", "channel": "KA", "customer": "Panda", "target_uos": 585.7143}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "channel": "KA", "customer": "Panda", "target_uos": 700.0}, {"sku": "LIPTON GTB FRESHNESS MINT 12X100X1.3G", "channel": "KA", "customer": "Panda", "target_uos": 84.0}, {"sku": "LIPTON GTB FRESHNESS PURE 12X100X1.5G", "channel": "KA", "customer": "Panda", "target_uos": 78.0}, {"sku": "LIPTON GTB LEM EKT 12X100X1.5G promo", "channel": "KA", "customer": "Panda", "target_uos": 61.0}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "channel": "KA", "customer": "Panda", "target_uos": 128.5714}, {"sku": "LIPTON YLTB FRESH 555 PROMO 16X240X2G", "channel": "KA", "customer": "Othaim", "target_uos": 357.1429}, {"sku": "LIPTON YLTB FRESH 555 PROMO 16X240X2G", "channel": "KA", "customer": "Lulu", "target_uos": 357.1429}, {"sku": "LIPTON YLTB FRESH 555 PROMO 16X240X2G", "channel": "KA", "customer": "BDG", "target_uos": 357.1429}, {"sku": "LIPTON YLTB FRESH 555 PROMO 16X240X2G", "channel": "KA", "customer": "Tamimi", "target_uos": 357.1429}, {"sku": "LIPTON YLTB FRESH 555 PROMO 16X240X2G", "channel": "KA", "customer": "Farm", "target_uos": 357.1429}, {"sku": "LIPTON YLTB FRESH 555 PROMO 16X240X2G", "channel": "KA", "customer": "Oth MT", "target_uos": 357.1429}, {"sku": "LIPTON YLTB FRESH 555 PROMO 16X240X2G", "channel": "KA", "customer": "Panda", "target_uos": 357.1429}, {"sku": "LIPTON MATCHA PURE DTTC 3P 16X20X1.5G", "channel": "KA", "customer": "Othaim", "target_uos": 46.0}, {"sku": "LIPTON INF AFTER DINNER 16X20X1.5G", "channel": "KA", "customer": "Othaim", "target_uos": 18.0}, {"sku": "LIPTON INF SWEET NIGHTS 16X20X1.5G", "channel": "KA", "customer": "Othaim", "target_uos": 18.0}, {"sku": "LIPTON INF TIME TO CHILL 16X20X1.5G", "channel": "KA", "customer": "Othaim", "target_uos": 46.0}, {"sku": "LIPTON(HI) LEMN&GINER DTTC EKT16X20X1.6G", "channel": "KA", "customer": "Othaim", "target_uos": 56.0}, {"sku": "LIPTON (HI)ANISESEED DTTC EKT 16X20X1.6G", "channel": "KA", "customer": "Othaim", "target_uos": 60.0}, {"sku": "LIPTON (HI) CAMOMILE DTTC EKT 16X20X1.0G", "channel": "KA", "customer": "Othaim", "target_uos": 152.0}, {"sku": "LIPTON (HI) HIBISCUS DTTC EKT 16X20X2G", "channel": "KA", "customer": "Othaim", "target_uos": 66.0}, {"sku": "LIPTON (HI)PEPERMINT DTTC EKT 16X20X1.8G", "channel": "KA", "customer": "Othaim", "target_uos": 56.0}, {"sku": "LIPTON GT PUR ENV  THOR 24X25X1.5G", "channel": "KA", "customer": "Othaim", "target_uos": 74.0}, {"sku": "LIPTON GT LEM ENV  THOR 24X25X1.3G", "channel": "KA", "customer": "Othaim", "target_uos": 47.0}, {"sku": "LIPTON GT MIN ENV  THOR24X25X1.3G", "channel": "KA", "customer": "Othaim", "target_uos": 38.0}, {"sku": "LIPTON GT PUR ENV  THOR 12X50X1.5G", "channel": "KA", "customer": "Othaim", "target_uos": 66.0}, {"sku": "LIPTON GT LEM ENV  THOR 12X50X1.3G", "channel": "KA", "customer": "Othaim", "target_uos": 42.0}, {"sku": "LIPTON GT MIN ENV  THOR12X50X1.3G", "channel": "KA", "customer": "Othaim", "target_uos": 52.0}, {"sku": "BROOKEBOND TP LAAL 24X400G", "channel": "KA", "customer": "Othaim", "target_uos": 88.0}, {"sku": "LIPTON YLTB FRESH 555 16X200X2G", "channel": "KA", "customer": "Othaim", "target_uos": 2800.0}, {"sku": "LIPTON YLTB FRESH 555 36X100X2G", "channel": "KA", "customer": "Othaim", "target_uos": 714.2857}, {"sku": "LIPTON YLTP Y23 12X800G", "channel": "KA", "customer": "Othaim", "target_uos": 806.0}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "channel": "KA", "customer": "Othaim", "target_uos": 18.0}, {"sku": "LIPTON YLTP Y23 24X400G", "channel": "KA", "customer": "Othaim", "target_uos": 385.7143}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "channel": "KA", "customer": "Othaim", "target_uos": 700.0}, {"sku": "LIPTON GTB FRESHNESS MINT 12X100X1.3G", "channel": "KA", "customer": "Othaim", "target_uos": 57.0}, {"sku": "LIPTON GTB FRESHNESS PURE 12X100X1.5G", "channel": "KA", "customer": "Othaim", "target_uos": 105.0}, {"sku": "LIPTON GTB LEM EKT 12X100X1.5G promo", "channel": "KA", "customer": "Othaim", "target_uos": 62.0}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "channel": "KA", "customer": "Othaim", "target_uos": 128.5714}, {"sku": "LIPTON MATCHA PURE DTTC 3P 16X20X1.5G", "channel": "KA", "customer": "Lulu", "target_uos": 24.0}, {"sku": "LIPTON INF AFTER DINNER 16X20X1.5G", "channel": "KA", "customer": "Lulu", "target_uos": 29.0}, {"sku": "LIPTON INF SWEET NIGHTS 16X20X1.5G", "channel": "KA", "customer": "Lulu", "target_uos": 29.0}, {"sku": "LIPTON INF TIME TO CHILL 16X20X1.5G", "channel": "KA", "customer": "Lulu", "target_uos": 46.0}, {"sku": "LIPTON(HI) LEMN&GINER DTTC EKT16X20X1.6G", "channel": "KA", "customer": "Lulu", "target_uos": 51.0}, {"sku": "LIPTON (HI)ANISESEED DTTC EKT 16X20X1.6G", "channel": "KA", "customer": "Lulu", "target_uos": 29.0}, {"sku": "LIPTON (HI) CAMOMILE DTTC EKT 16X20X1.0G", "channel": "KA", "customer": "Lulu", "target_uos": 107.0}, {"sku": "LIPTON (HI) HIBISCUS DTTC EKT 16X20X2G", "channel": "KA", "customer": "Lulu", "target_uos": 29.0}, {"sku": "LIPTON (HI)PEPERMINT DTTC EKT 16X20X1.8G", "channel": "KA", "customer": "Lulu", "target_uos": 29.0}, {"sku": "LIPTON TB ENG BRKFST ENV EKT 24X25X2G", "channel": "KA", "customer": "Lulu", "target_uos": 7.0}, {"sku": "LIPTON TB EARL GREY ENV EKT 24X25X1.5G", "channel": "KA", "customer": "Lulu", "target_uos": 7.0}, {"sku": "LIPTON TB ENG BRKFST ENV EKT 12X50X2G", "channel": "KA", "customer": "Lulu", "target_uos": 23.0}, {"sku": "LIPTON TB EARL GREY ENV EKT 12X50X1.5G", "channel": "KA", "customer": "Lulu", "target_uos": 23.0}, {"sku": "LIPTON GT PUR ENV  THOR 24X25X1.5G", "channel": "KA", "customer": "Lulu", "target_uos": 39.0}, {"sku": "LIPTON GT LEM ENV  THOR 24X25X1.3G", "channel": "KA", "customer": "Lulu", "target_uos": 39.0}, {"sku": "LIPTON GT MIN ENV  THOR24X25X1.3G", "channel": "KA", "customer": "Lulu", "target_uos": 39.0}, {"sku": "LIPTON GT PUR ENV  THOR 12X50X1.5G", "channel": "KA", "customer": "Lulu", "target_uos": 45.0}, {"sku": "LIPTON GT LEM ENV  THOR 12X50X1.3G", "channel": "KA", "customer": "Lulu", "target_uos": 45.0}, {"sku": "LIPTON GT MIN ENV  THOR12X50X1.3G", "channel": "KA", "customer": "Lulu", "target_uos": 33.0}, {"sku": "BROOKEBOND TP LAAL 24X400G", "channel": "KA", "customer": "Lulu", "target_uos": 67.0}, {"sku": "LIPTON YLTB FRESH 555 36X100X2G", "channel": "KA", "customer": "Lulu", "target_uos": 714.2857}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "channel": "KA", "customer": "Lulu", "target_uos": 45.0}, {"sku": "LIPTON YLTP Y23 48X200G", "channel": "KA", "customer": "Lulu", "target_uos": 17.0}, {"sku": "LIPTON YLTP Y23 12X800G", "channel": "KA", "customer": "Lulu", "target_uos": 198.0}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "channel": "KA", "customer": "Lulu", "target_uos": 18.0}, {"sku": "LIPTON YLTP Y23 24X400G", "channel": "KA", "customer": "Lulu", "target_uos": 385.7143}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "channel": "KA", "customer": "Lulu", "target_uos": 700.0}, {"sku": "LIPTON GTB FRESHNESS MINT 12X100X1.3G", "channel": "KA", "customer": "Lulu", "target_uos": 38.0}, {"sku": "LIPTON GTB FRESHNESS PURE 12X100X1.5G", "channel": "KA", "customer": "Lulu", "target_uos": 41.0}, {"sku": "LIPTON GTB LEM EKT 12X100X1.5G promo", "channel": "KA", "customer": "Lulu", "target_uos": 43.0}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "channel": "KA", "customer": "Lulu", "target_uos": 128.5714}, {"sku": "LIPTON MATCHA PURE DTTC 3P 16X20X1.5G", "channel": "KA", "customer": "BDG", "target_uos": 37.0}, {"sku": "LIPTON INF AFTER DINNER 16X20X1.5G", "channel": "KA", "customer": "BDG", "target_uos": 37.0}, {"sku": "LIPTON INF SWEET NIGHTS 16X20X1.5G", "channel": "KA", "customer": "BDG", "target_uos": 37.0}, {"sku": "LIPTON INF TIME TO CHILL 16X20X1.5G", "channel": "KA", "customer": "BDG", "target_uos": 46.0}, {"sku": "LIPTON(HI) LEMN&GINER DTTC EKT16X20X1.6G", "channel": "KA", "customer": "BDG", "target_uos": 23.0}, {"sku": "LIPTON (HI)ANISESEED DTTC EKT 16X20X1.6G", "channel": "KA", "customer": "BDG", "target_uos": 51.0}, {"sku": "LIPTON (HI) CAMOMILE DTTC EKT 16X20X1.0G", "channel": "KA", "customer": "BDG", "target_uos": 124.0}, {"sku": "LIPTON (HI) HIBISCUS DTTC EKT 16X20X2G", "channel": "KA", "customer": "BDG", "target_uos": 61.0}, {"sku": "LIPTON (HI)PEPERMINT DTTC EKT 16X20X1.8G", "channel": "KA", "customer": "BDG", "target_uos": 33.0}, {"sku": "LIPTON TB ENG BRKFST ENV EKT 24X25X2G", "channel": "KA", "customer": "BDG", "target_uos": 15.0}, {"sku": "LIPTON TB EARL GREY ENV EKT 24X25X1.5G", "channel": "KA", "customer": "BDG", "target_uos": 15.0}, {"sku": "LIPTON TB ENG BRKFST ENV EKT 12X50X2G", "channel": "KA", "customer": "BDG", "target_uos": 27.0}, {"sku": "LIPTON TB EARL GREY ENV EKT 12X50X1.5G", "channel": "KA", "customer": "BDG", "target_uos": 27.0}, {"sku": "LIPTON GT PUR ENV  THOR 24X25X1.5G", "channel": "KA", "customer": "BDG", "target_uos": 51.0}, {"sku": "LIPTON GT LEM ENV  THOR 24X25X1.3G", "channel": "KA", "customer": "BDG", "target_uos": 16.0}, {"sku": "LIPTON GT MIN ENV  THOR24X25X1.3G", "channel": "KA", "customer": "BDG", "target_uos": 17.0}, {"sku": "LIPTON GT PUR ENV  THOR 12X50X1.5G", "channel": "KA", "customer": "BDG", "target_uos": 73.0}, {"sku": "LIPTON GT LEM ENV  THOR 12X50X1.3G", "channel": "KA", "customer": "BDG", "target_uos": 19.0}, {"sku": "LIPTON GT MIN ENV  THOR12X50X1.3G", "channel": "KA", "customer": "BDG", "target_uos": 27.0}, {"sku": "BROOKEBOND TP LAAL 24X400G", "channel": "KA", "customer": "BDG", "target_uos": 23.0}, {"sku": "LIPTON YLTB FRESH 555 36X100X2G", "channel": "KA", "customer": "BDG", "target_uos": 714.2857}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "channel": "KA", "customer": "BDG", "target_uos": 51.0}, {"sku": "LIPTON YLTP Y23 48X200G", "channel": "KA", "customer": "BDG", "target_uos": 14.0}, {"sku": "LIPTON YLTP Y23 12X800G", "channel": "KA", "customer": "BDG", "target_uos": 198.0}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "channel": "KA", "customer": "BDG", "target_uos": 18.0}, {"sku": "LIPTON YLTP Y23 24X400G", "channel": "KA", "customer": "BDG", "target_uos": 385.7143}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "channel": "KA", "customer": "BDG", "target_uos": 700.0}, {"sku": "LIPTON GTB FRESHNESS MINT 12X100X1.3G", "channel": "KA", "customer": "BDG", "target_uos": 27.0}, {"sku": "LIPTON GTB FRESHNESS PURE 12X100X1.5G", "channel": "KA", "customer": "BDG", "target_uos": 43.0}, {"sku": "LIPTON GTB LEM EKT 12X100X1.5G promo", "channel": "KA", "customer": "BDG", "target_uos": 36.0}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "channel": "KA", "customer": "BDG", "target_uos": 128.5714}, {"sku": "LIPTON MATCHA PURE DTTC 3P 16X20X1.5G", "channel": "KA", "customer": "Tamimi", "target_uos": 19.0}, {"sku": "LIPTON INF AFTER DINNER 16X20X1.5G", "channel": "KA", "customer": "Tamimi", "target_uos": 19.0}, {"sku": "LIPTON INF SWEET NIGHTS 16X20X1.5G", "channel": "KA", "customer": "Tamimi", "target_uos": 19.0}, {"sku": "LIPTON INF TIME TO CHILL 16X20X1.5G", "channel": "KA", "customer": "Tamimi", "target_uos": 46.0}, {"sku": "LIPTON(HI) LEMN&GINER DTTC EKT16X20X1.6G", "channel": "KA", "customer": "Tamimi", "target_uos": 37.0}, {"sku": "LIPTON (HI)ANISESEED DTTC EKT 16X20X1.6G", "channel": "KA", "customer": "Tamimi", "target_uos": 37.0}, {"sku": "LIPTON (HI) CAMOMILE DTTC EKT 16X20X1.0G", "channel": "KA", "customer": "Tamimi", "target_uos": 94.0}, {"sku": "LIPTON (HI) HIBISCUS DTTC EKT 16X20X2G", "channel": "KA", "customer": "Tamimi", "target_uos": 51.0}, {"sku": "LIPTON (HI)PEPERMINT DTTC EKT 16X20X1.8G", "channel": "KA", "customer": "Tamimi", "target_uos": 23.0}, {"sku": "LIPTON TB ENG BRKFST ENV EKT 24X25X2G", "channel": "KA", "customer": "Tamimi", "target_uos": 7.0}, {"sku": "LIPTON TB EARL GREY ENV EKT 24X25X1.5G", "channel": "KA", "customer": "Tamimi", "target_uos": 7.0}, {"sku": "LIPTON TB ENG BRKFST ENV EKT 12X50X2G", "channel": "KA", "customer": "Tamimi", "target_uos": 19.0}, {"sku": "LIPTON TB EARL GREY ENV EKT 12X50X1.5G", "channel": "KA", "customer": "Tamimi", "target_uos": 19.0}, {"sku": "LIPTON GT PUR ENV  THOR 24X25X1.5G", "channel": "KA", "customer": "Tamimi", "target_uos": 42.0}, {"sku": "LIPTON GT LEM ENV  THOR 24X25X1.3G", "channel": "KA", "customer": "Tamimi", "target_uos": 16.0}, {"sku": "LIPTON GT MIN ENV  THOR24X25X1.3G", "channel": "KA", "customer": "Tamimi", "target_uos": 17.0}, {"sku": "LIPTON GT PUR ENV  THOR 12X50X1.5G", "channel": "KA", "customer": "Tamimi", "target_uos": 55.0}, {"sku": "LIPTON GT LEM ENV  THOR 12X50X1.3G", "channel": "KA", "customer": "Tamimi", "target_uos": 5.0}, {"sku": "LIPTON GT MIN ENV  THOR12X50X1.3G", "channel": "KA", "customer": "Tamimi", "target_uos": 9.0}, {"sku": "BROOKEBOND TP LAAL 24X400G", "channel": "KA", "customer": "Tamimi", "target_uos": 7.0}, {"sku": "LIPTON YLTB FRESH 555 36X100X2G", "channel": "KA", "customer": "Tamimi", "target_uos": 714.2857}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "channel": "KA", "customer": "Tamimi", "target_uos": 19.0}, {"sku": "LIPTON YLTP Y23 48X200G", "channel": "KA", "customer": "Tamimi", "target_uos": 10.0}, {"sku": "LIPTON YLTP Y23 12X800G", "channel": "KA", "customer": "Tamimi", "target_uos": 198.0}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "channel": "KA", "customer": "Tamimi", "target_uos": 16.0}, {"sku": "LIPTON YLTP Y23 24X400G", "channel": "KA", "customer": "Tamimi", "target_uos": 385.7143}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "channel": "KA", "customer": "Tamimi", "target_uos": 700.0}, {"sku": "LIPTON GTB FRESHNESS MINT 12X100X1.3G", "channel": "KA", "customer": "Tamimi", "target_uos": 31.0}, {"sku": "LIPTON GTB FRESHNESS PURE 12X100X1.5G", "channel": "KA", "customer": "Tamimi", "target_uos": 44.0}, {"sku": "LIPTON GTB LEM EKT 12X100X1.5G promo", "channel": "KA", "customer": "Tamimi", "target_uos": 19.0}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "channel": "KA", "customer": "Tamimi", "target_uos": 128.5714}, {"sku": "LIPTON(HI) LEMN&GINER DTTC EKT16X20X1.6G", "channel": "KA", "customer": "Farm", "target_uos": 16.0}, {"sku": "LIPTON (HI)ANISESEED DTTC EKT 16X20X1.6G", "channel": "KA", "customer": "Farm", "target_uos": 13.0}, {"sku": "LIPTON (HI) CAMOMILE DTTC EKT 16X20X1.0G", "channel": "KA", "customer": "Farm", "target_uos": 60.0}, {"sku": "LIPTON (HI) HIBISCUS DTTC EKT 16X20X2G", "channel": "KA", "customer": "Farm", "target_uos": 20.0}, {"sku": "LIPTON (HI)PEPERMINT DTTC EKT 16X20X1.8G", "channel": "KA", "customer": "Farm", "target_uos": 8.0}, {"sku": "LIPTON GT PUR ENV  THOR 24X25X1.5G", "channel": "KA", "customer": "Farm", "target_uos": 16.0}, {"sku": "LIPTON GT LEM ENV  THOR 24X25X1.3G", "channel": "KA", "customer": "Farm", "target_uos": 18.0}, {"sku": "LIPTON GT MIN ENV  THOR24X25X1.3G", "channel": "KA", "customer": "Farm", "target_uos": 22.0}, {"sku": "LIPTON GT PUR ENV  THOR 12X50X1.5G", "channel": "KA", "customer": "Farm", "target_uos": 14.0}, {"sku": "LIPTON GT LEM ENV  THOR 12X50X1.3G", "channel": "KA", "customer": "Farm", "target_uos": 6.0}, {"sku": "LIPTON GT MIN ENV  THOR12X50X1.3G", "channel": "KA", "customer": "Farm", "target_uos": 8.0}, {"sku": "BROOKEBOND TP LAAL 24X400G", "channel": "KA", "customer": "Farm", "target_uos": 5.0}, {"sku": "LIPTON YLTB FRESH 555 36X100X2G", "channel": "KA", "customer": "Farm", "target_uos": 714.2857}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "channel": "KA", "customer": "Farm", "target_uos": 8.0}, {"sku": "LIPTON YLTP Y23 48X200G", "channel": "KA", "customer": "Farm", "target_uos": 4.0}, {"sku": "LIPTON YLTP Y23 12X800G", "channel": "KA", "customer": "Farm", "target_uos": 198.0}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "channel": "KA", "customer": "Farm", "target_uos": 16.0}, {"sku": "LIPTON YLTP Y23 24X400G", "channel": "KA", "customer": "Farm", "target_uos": 385.7143}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "channel": "KA", "customer": "Farm", "target_uos": 700.0}, {"sku": "LIPTON GTB FRESHNESS MINT 12X100X1.3G", "channel": "KA", "customer": "Farm", "target_uos": 16.0}, {"sku": "LIPTON GTB FRESHNESS PURE 12X100X1.5G", "channel": "KA", "customer": "Farm", "target_uos": 33.0}, {"sku": "LIPTON GTB LEM EKT 12X100X1.5G promo", "channel": "KA", "customer": "Farm", "target_uos": 13.0}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "channel": "KA", "customer": "Farm", "target_uos": 128.5714}, {"sku": "LIPTON(HI) LEMN&GINER DTTC EKT16X20X1.6G", "channel": "KA", "customer": "Oth MT", "target_uos": 35.0}, {"sku": "LIPTON (HI)ANISESEED DTTC EKT 16X20X1.6G", "channel": "KA", "customer": "Oth MT", "target_uos": 33.0}, {"sku": "LIPTON (HI) CAMOMILE DTTC EKT 16X20X1.0G", "channel": "KA", "customer": "Oth MT", "target_uos": 77.0}, {"sku": "LIPTON (HI) HIBISCUS DTTC EKT 16X20X2G", "channel": "KA", "customer": "Oth MT", "target_uos": 25.0}, {"sku": "LIPTON (HI)PEPERMINT DTTC EKT 16X20X1.8G", "channel": "KA", "customer": "Oth MT", "target_uos": 25.0}, {"sku": "LIPTON GT PUR ENV  THOR 24X25X1.5G", "channel": "KA", "customer": "Oth MT", "target_uos": 39.0}, {"sku": "LIPTON GT LEM ENV  THOR 24X25X1.3G", "channel": "KA", "customer": "Oth MT", "target_uos": 41.0}, {"sku": "LIPTON GT MIN ENV  THOR24X25X1.3G", "channel": "KA", "customer": "Oth MT", "target_uos": 39.0}, {"sku": "LIPTON GT PUR ENV  THOR 12X50X1.5G", "channel": "KA", "customer": "Oth MT", "target_uos": 71.0}, {"sku": "LIPTON GT LEM ENV  THOR 12X50X1.3G", "channel": "KA", "customer": "Oth MT", "target_uos": 85.0}, {"sku": "LIPTON GT MIN ENV  THOR12X50X1.3G", "channel": "KA", "customer": "Oth MT", "target_uos": 69.0}, {"sku": "BROOKEBOND TP LAAL 24X400G", "channel": "KA", "customer": "Oth MT", "target_uos": 41.0}, {"sku": "LIPTON YLTB FRESH 555 36X100X2G", "channel": "KA", "customer": "Oth MT", "target_uos": 714.2857}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "channel": "KA", "customer": "Oth MT", "target_uos": 48.0}, {"sku": "LIPTON YLTP Y23 48X200G", "channel": "KA", "customer": "Oth MT", "target_uos": 35.0}, {"sku": "LIPTON YLTP Y23 12X800G", "channel": "KA", "customer": "Oth MT", "target_uos": 196.0}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "channel": "KA", "customer": "Oth MT", "target_uos": 16.0}, {"sku": "LIPTON YLTP Y23 24X400G", "channel": "KA", "customer": "Oth MT", "target_uos": 385.7143}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "channel": "KA", "customer": "Oth MT", "target_uos": 700.0}, {"sku": "LIPTON GTB FRESHNESS MINT 12X100X1.3G", "channel": "KA", "customer": "Oth MT", "target_uos": 22.0}, {"sku": "LIPTON GTB FRESHNESS PURE 12X100X1.5G", "channel": "KA", "customer": "Oth MT", "target_uos": 39.0}, {"sku": "LIPTON GTB LEM EKT 12X100X1.5G promo", "channel": "KA", "customer": "Oth MT", "target_uos": 21.0}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "channel": "KA", "customer": "Oth MT", "target_uos": 128.5714}, {"sku": "PUKKA FEEL NEW TB SEL 4X20X2G", "channel": "KA", "customer": "Lulu", "target_uos": 220.0}, {"sku": "PUKKA SUPREM MATCHA GREN TB SEL4X20X1.5G", "channel": "KA", "customer": "Lulu", "target_uos": 220.0}, {"sku": "PUKKA LEMN GINGR&MANKA HNY TB SEL4X20X2G", "channel": "KA", "customer": "Lulu", "target_uos": 5.0}, {"sku": "BROOKEBOND JAR LAAL 3P 12X370G", "channel": "KA", "customer": "Lulu", "target_uos": 45.0}, {"sku": "BROOKEBOND TB SPECIAL 18X100X2G", "channel": "KA", "customer": "Panda", "target_uos": 9000.0}, {"sku": "Pukka Org Morning berry SEL 4x20x1.7g", "channel": "KA", "customer": "Panda", "target_uos": 220.0}, {"sku": "Pukka Org Night time berry SEL 4x20x1.6g", "channel": "KA", "customer": "Panda", "target_uos": 220.0}, {"sku": "PUKKA CHAM,VANI&MANK HNY TB(SL)4X20X1.6G", "channel": "KA", "customer": "Panda", "target_uos": 220.0}, {"sku": "LIPTON YLTP EKT 2X5KG", "channel": "WS", "customer": "", "target_uos": 3500.0}, {"sku": "BROOKEBOND RLTP CHARGE ROLL EKT2X5KG", "channel": "WS", "customer": "", "target_uos": 1200.0}, {"sku": "LIPTON GREENTEA PURE FNX EKT16X20X1.5G", "channel": "WS", "customer": "", "target_uos": 400.0}, {"sku": "LIPTON YELLOW LABEL UFS FNX EKT16X20X2G", "channel": "WS", "customer": "", "target_uos": 600.0}, {"sku": "LIPTON GT PUR ENV  THOR 12X50X1.5G", "channel": "WS", "customer": "", "target_uos": 50.0}, {"sku": "LIPTON GT LEM ENV  THOR 12X50X1.3G", "channel": "WS", "customer": "", "target_uos": 25.0}, {"sku": "LIPTON GT MIN ENV  THOR12X50X1.3G", "channel": "WS", "customer": "", "target_uos": 15.0}, {"sku": "BROOKEBOND TP LAAL 24X400G", "channel": "WS", "customer": "", "target_uos": 300.0}, {"sku": "LIPTON YLTB CATERING 555 36X100X2G", "channel": "WS", "customer": "", "target_uos": 5000.0}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "channel": "WS", "customer": "", "target_uos": 7500.0}, {"sku": "LIPTON YLTB ENV 555 24X100X2G", "channel": "WS", "customer": "", "target_uos": 200.0}, {"sku": "LIPTON YLTP Y23 48X200G", "channel": "WS", "customer": "", "target_uos": 2300.0}, {"sku": "LIPTON YLTP Y23 12X800G", "channel": "WS", "customer": "", "target_uos": 1100.0}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "channel": "WS", "customer": "", "target_uos": 3600.0}, {"sku": "LIPTON YLTP Y23 24X400G", "channel": "WS", "customer": "", "target_uos": 1700.0}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "channel": "WS", "customer": "", "target_uos": 3000.0}, {"sku": "LIPTON GTB FRESHNESS MINT 12X100X1.3G", "channel": "WS", "customer": "", "target_uos": 550.0}, {"sku": "LIPTON GTB FRESHNESS PURE 12X100X1.5G", "channel": "WS", "customer": "", "target_uos": 3000.0}, {"sku": "BROOKEBOND TP LAAL 48X200G", "channel": "WS", "customer": "", "target_uos": 100.0}, {"sku": "BROOKEBOND TP LAAL 12X800G", "channel": "WS", "customer": "", "target_uos": 150.0}, {"sku": "LIPTON GTB LEM EKT 12X100X1.5G promo", "channel": "WS", "customer": "", "target_uos": 330.0}, {"sku": "BROOKEBOND TP 6x1.6KG", "channel": "WS", "customer": "", "target_uos": 250.0}, {"sku": "LIPTON Yellow label TP  6X1.6KG", "channel": "WS", "customer": "", "target_uos": 50.0}, {"sku": "LIPTON YLTB FRESH 555 24X100X2G", "channel": "WS", "customer": "", "target_uos": 10700.0}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "channel": "WS", "customer": "", "target_uos": 50.0}, {"sku": "BROOKEBOND JAR LAAL 3P 12X370G", "channel": "WS", "customer": "", "target_uos": 50.0}, {"sku": "LIPTON YLTP TP TWPK 12X(400+400)G", "channel": "WS", "customer": "", "target_uos": 760.0}, {"sku": "LIPTON YLTB FRESH 555 PROMO 16X240X2G", "channel": "WS", "customer": "", "target_uos": 4000.0}, {"sku": "LIPTON GTB PUR SEN UT 24X25X1.5G", "channel": "WS", "customer": "", "target_uos": 750.0}, {"sku": "LIPTON GTB LEM SEN UT 24X25X1.3G", "channel": "WS", "customer": "", "target_uos": 260.0}, {"sku": "LIPTON GTB MIN SEN UT 24X25X1.3G", "channel": "WS", "customer": "", "target_uos": 230.0}, {"sku": "LIPTON(HI) LEMON&GINGER 24X20X1.6G", "channel": "WS", "customer": "", "target_uos": 36.6667}, {"sku": "LIPTON (HI)ANISESEED 24X20X1.6G", "channel": "WS", "customer": "", "target_uos": 46.6667}, {"sku": "LIPTON (HI) CAMOMILE 24X20X1.0G", "channel": "WS", "customer": "", "target_uos": 66.6667}, {"sku": "LIPTON (HI) HIBISCUS 24X20X2G", "channel": "WS", "customer": "", "target_uos": 40.0}, {"sku": "LIPTON (HI)PEPERMINT 24X20X1.8G", "channel": "WS", "customer": "", "target_uos": 26.6667}, {"sku": "BROOKEBOND TP LAAL 24X400G", "channel": "VFM", "customer": "", "target_uos": 55.0}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "channel": "VFM", "customer": "", "target_uos": 60.0}, {"sku": "LIPTON YLTP Y23 48X200G", "channel": "VFM", "customer": "", "target_uos": 40.0}, {"sku": "LIPTON YLTP Y23 12X800G", "channel": "VFM", "customer": "", "target_uos": 60.0}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "channel": "VFM", "customer": "", "target_uos": 20.0}, {"sku": "LIPTON YLTP Y23 24X400G", "channel": "VFM", "customer": "", "target_uos": 60.0}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "channel": "VFM", "customer": "", "target_uos": 150.0}, {"sku": "LIPTON GTB FRESHNESS MINT 12X100X1.3G", "channel": "VFM", "customer": "", "target_uos": 100.0}, {"sku": "LIPTON GTB FRESHNESS PURE 12X100X1.5G", "channel": "VFM", "customer": "", "target_uos": 50.0}, {"sku": "BROOKEBOND TP LAAL 12X800G", "channel": "VFM", "customer": "", "target_uos": 50.0}, {"sku": "LIPTON GTB LEM EKT 12X100X1.5G promo", "channel": "VFM", "customer": "", "target_uos": 30.0}, {"sku": "BROOKEBOND TP 6x1.6KG", "channel": "VFM", "customer": "", "target_uos": 100.0}, {"sku": "LIPTON Yellow label TP  6X1.6KG", "channel": "VFM", "customer": "", "target_uos": 100.0}, {"sku": "LIPTON YLTB FRESH 555 24X100X2G", "channel": "VFM", "customer": "", "target_uos": 1000.0}, {"sku": "BROOKEBOND JAR LAAL 3P 12X370G", "channel": "VFM", "customer": "", "target_uos": 100.0}, {"sku": "LIPTON YLTB FRESH 555 PROMO 16X240X2G", "channel": "VFM", "customer": "", "target_uos": 350.0}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "channel": "VFM", "customer": "", "target_uos": 30.0}, {"sku": "LIPTON GTB PUR SEN UT 24X25X1.5G", "channel": "VFM", "customer": "", "target_uos": 60.0}, {"sku": "LIPTON GTB LEM SEN UT 24X25X1.3G", "channel": "VFM", "customer": "", "target_uos": 30.0}, {"sku": "LIPTON GTB MIN SEN UT 24X25X1.3G", "channel": "VFM", "customer": "", "target_uos": 30.0}, {"sku": "BROOKEBOND TB SPECIAL 18X100X2G", "channel": "VFM", "customer": "", "target_uos": 3000.0}, {"sku": "LIPTON(HI) LEMON&GINGER 24X20X1.6G", "channel": "VFM", "customer": "", "target_uos": 10.0}, {"sku": "LIPTON (HI)ANISESEED 24X20X1.6G", "channel": "VFM", "customer": "", "target_uos": 10.0}, {"sku": "LIPTON (HI) CAMOMILE 24X20X1.0G", "channel": "VFM", "customer": "", "target_uos": 10.0}, {"sku": "LIPTON (HI) HIBISCUS 24X20X2G", "channel": "VFM", "customer": "", "target_uos": 10.0}, {"sku": "LIPTON (HI)PEPERMINT 24X20X1.8G", "channel": "VFM", "customer": "", "target_uos": 10.0}, {"sku": "LIPTON EXS BLK ENG BRKFST EKT 6X25X2G", "channel": "OOH", "customer": "", "target_uos": 312.0}, {"sku": "LIPTON YLTP EKT 2X5KG", "channel": "OOH", "customer": "", "target_uos": 49.0}, {"sku": "BROOKEBOND RLTP CHARGE ROLL EKT2X5KG", "channel": "OOH", "customer": "", "target_uos": 14.0}, {"sku": "LIPTON ENG BREAKFAST FNX EKT16X20X2G", "channel": "OOH", "customer": "", "target_uos": 165.0}, {"sku": "LIPTON GREENTEA PURE FNX EKT16X20X1.5G", "channel": "OOH", "customer": "", "target_uos": 469.0}, {"sku": "LIPTON YELLOW LABEL UFS FNX EKT16X20X2G", "channel": "OOH", "customer": "", "target_uos": 559.0}, {"sku": "LIPTON GREENTEA MINT FNX EKT 16X20X1.5G", "channel": "OOH", "customer": "", "target_uos": 410.0}, {"sku": "LIPTON CAMOMILE UFS FNX EKT16X20X1.0G", "channel": "OOH", "customer": "", "target_uos": 20.0}, {"sku": "LIPTON EXS INF CHAMOMIL EKT 6X25X1.3G", "channel": "OOH", "customer": "", "target_uos": 6.0}, {"sku": "LIPTON EXS GREEN SENCHA EKT 6X25X1.8G", "channel": "OOH", "customer": "", "target_uos": 110.0}, {"sku": "LIPTON EXS BLACK EARLGREY EKT 6X25X1.8G", "channel": "OOH", "customer": "", "target_uos": 15.0}, {"sku": "LIPTON EXS GRN INTENSE MINT EKT 6X25X2G", "channel": "OOH", "customer": "", "target_uos": 20.0}, {"sku": "LIPTON YLTB CATERING 555 36X100X2G", "channel": "OOH", "customer": "", "target_uos": 2758.0}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "channel": "OOH", "customer": "", "target_uos": 300.0}, {"sku": "LIPTON YLTB ENV 555 24X100X2G", "channel": "OOH", "customer": "", "target_uos": 428.0}, {"sku": "LIPTON GTB FRESHNESS MINT 12X100X1.3G", "channel": "OOH", "customer": "", "target_uos": 60.0}, {"sku": "LIPTON GTB FRESHNESS PURE 12X100X1.5G", "channel": "OOH", "customer": "", "target_uos": 376.0}, {"sku": "LIPTON GTB LEM EKT 12X100X1.5G promo", "channel": "OOH", "customer": "", "target_uos": 50.0}, {"sku": "BROOKEBOND TB SPECIAL 18X100X2G", "channel": "OOH", "customer": "", "target_uos": 615.0}, {"sku": "LIPTON MATCHA PURE DTTC 3P 16X20X1.5G", "channel": "RVS", "customer": "", "target_uos": 30.0}, {"sku": "LIPTON INF AFTER DINNER 16X20X1.5G", "channel": "RVS", "customer": "", "target_uos": 30.0}, {"sku": "LIPTON INF SWEET NIGHTS 16X20X1.5G", "channel": "RVS", "customer": "", "target_uos": 50.0}, {"sku": "LIPTON INF TIME TO CHILL 16X20X1.5G", "channel": "RVS", "customer": "", "target_uos": 50.0}, {"sku": "LIPTON YLTP EKT 2X5KG", "channel": "RVS", "customer": "", "target_uos": 282.0}, {"sku": "BROOKEBOND RLTP CHARGE ROLL EKT2X5KG", "channel": "RVS", "customer": "", "target_uos": 390.0}, {"sku": "LIPTON GT PUR ENV  THOR 12X50X1.5G", "channel": "RVS", "customer": "", "target_uos": 20.0}, {"sku": "LIPTON GT LEM ENV  THOR 12X50X1.3G", "channel": "RVS", "customer": "", "target_uos": 20.0}, {"sku": "LIPTON GT MIN ENV  THOR12X50X1.3G", "channel": "RVS", "customer": "", "target_uos": 20.0}, {"sku": "BROOKEBOND TP LAAL 24X400G", "channel": "RVS", "customer": "", "target_uos": 70.0}, {"sku": "LIPTON YLTB CATERING 555 36X100X2G", "channel": "RVS", "customer": "", "target_uos": 900.0}, {"sku": "LIPTON YLTB FRESH 555 16X200X2G", "channel": "RVS", "customer": "", "target_uos": 300.0}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "channel": "RVS", "customer": "", "target_uos": 1100.0}, {"sku": "LIPTON YLTP Y23 48X200G", "channel": "RVS", "customer": "", "target_uos": 450.0}, {"sku": "LIPTON YLTP Y23 12X800G", "channel": "RVS", "customer": "", "target_uos": 250.0}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "channel": "RVS", "customer": "", "target_uos": 750.0}, {"sku": "LIPTON YLTP Y23 24X400G", "channel": "RVS", "customer": "", "target_uos": 320.0}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "channel": "RVS", "customer": "", "target_uos": 570.0}, {"sku": "LIPTON GTB FRESHNESS MINT 12X100X1.3G", "channel": "RVS", "customer": "", "target_uos": 110.0}, {"sku": "LIPTON GTB FRESHNESS PURE 12X100X1.5G", "channel": "RVS", "customer": "", "target_uos": 210.0}, {"sku": "BROOKEBOND TP LAAL 48X200G", "channel": "RVS", "customer": "", "target_uos": 80.0}, {"sku": "BROOKEBOND TP LAAL 12X800G", "channel": "RVS", "customer": "", "target_uos": 60.0}, {"sku": "LIPTON GTB LEM EKT 12X100X1.5G promo", "channel": "RVS", "customer": "", "target_uos": 100.0}, {"sku": "LIPTON YLTB FRESH 555 24X100X2G", "channel": "RVS", "customer": "", "target_uos": 1800.0}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "channel": "RVS", "customer": "", "target_uos": 110.0}, {"sku": "BROOKEBOND JAR LAAL 3P 12X370G", "channel": "RVS", "customer": "", "target_uos": 200.0}, {"sku": "LIPTON GTB PUR SEN UT 24X25X1.5G", "channel": "RVS", "customer": "", "target_uos": 275.0}, {"sku": "LIPTON GTB LEM SEN UT 24X25X1.3G", "channel": "RVS", "customer": "", "target_uos": 200.0}, {"sku": "LIPTON GTB MIN SEN UT 24X25X1.3G", "channel": "RVS", "customer": "", "target_uos": 230.0}, {"sku": "BROOKEBOND TB SPECIAL 18X100X2G", "channel": "RVS", "customer": "", "target_uos": 250.0}, {"sku": "LIPTON MATCHA PURE DTTC 3P 16X20X1.5G", "channel": "LSM", "customer": "", "target_uos": 10.0}, {"sku": "LIPTON INF AFTER DINNER 16X20X1.5G", "channel": "LSM", "customer": "", "target_uos": 15.0}, {"sku": "LIPTON INF SWEET NIGHTS 16X20X1.5G", "channel": "LSM", "customer": "", "target_uos": 15.0}, {"sku": "LIPTON INF TIME TO CHILL 16X20X1.5G", "channel": "LSM", "customer": "", "target_uos": 15.0}, {"sku": "LIPTON GT PUR ENV  THOR 12X50X1.5G", "channel": "LSM", "customer": "", "target_uos": 50.0}, {"sku": "LIPTON GT LEM ENV  THOR 12X50X1.3G", "channel": "LSM", "customer": "", "target_uos": 20.0}, {"sku": "LIPTON GT MIN ENV  THOR12X50X1.3G", "channel": "LSM", "customer": "", "target_uos": 20.0}, {"sku": "BROOKEBOND TP LAAL 24X400G", "channel": "LSM", "customer": "", "target_uos": 20.0}, {"sku": "LIPTON YLTB FRESH 555 16X200X2G", "channel": "LSM", "customer": "", "target_uos": 60.0}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "channel": "LSM", "customer": "", "target_uos": 110.0}, {"sku": "LIPTON YLTP Y23 48X200G", "channel": "LSM", "customer": "", "target_uos": 30.0}, {"sku": "LIPTON YLTP Y23 12X800G", "channel": "LSM", "customer": "", "target_uos": 35.0}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "channel": "LSM", "customer": "", "target_uos": 28.0}, {"sku": "LIPTON YLTP Y23 24X400G", "channel": "LSM", "customer": "", "target_uos": 190.0}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "channel": "LSM", "customer": "", "target_uos": 185.0}, {"sku": "LIPTON GTB FRESHNESS MINT 12X100X1.3G", "channel": "LSM", "customer": "", "target_uos": 25.0}, {"sku": "LIPTON GTB FRESHNESS PURE 12X100X1.5G", "channel": "LSM", "customer": "", "target_uos": 30.0}, {"sku": "LIPTON GTB LEM EKT 12X100X1.5G promo", "channel": "LSM", "customer": "", "target_uos": 25.0}, {"sku": "LIPTON YLTB FRESH 555 24X100X2G", "channel": "LSM", "customer": "", "target_uos": 352.0}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "channel": "LSM", "customer": "", "target_uos": 30.0}, {"sku": "LIPTON GTB PUR SEN UT 24X25X1.5G", "channel": "LSM", "customer": "", "target_uos": 45.0}, {"sku": "LIPTON GTB LEM SEN UT 24X25X1.3G", "channel": "LSM", "customer": "", "target_uos": 30.0}, {"sku": "LIPTON GTB MIN SEN UT 24X25X1.3G", "channel": "LSM", "customer": "", "target_uos": 30.0}, {"sku": "BROOKEBOND JAR LAAL 3P 12X370G", "channel": "LSM", "customer": "", "target_uos": 20.0}, {"sku": "LIPTON MATCHA PURE DTTC 3P 16X20X1.5G", "channel": "Ecom", "customer": "", "target_uos": 15.0}, {"sku": "LIPTON INF AFTER DINNER 16X20X1.5G", "channel": "Ecom", "customer": "", "target_uos": 65.0}, {"sku": "LIPTON INF SWEET NIGHTS 16X20X1.5G", "channel": "Ecom", "customer": "", "target_uos": 60.0}, {"sku": "LIPTON INF TIME TO CHILL 16X20X1.5G", "channel": "Ecom", "customer": "", "target_uos": 150.0}, {"sku": "LIPTON YLTP EKT 2X5KG", "channel": "Ecom", "customer": "", "target_uos": 35.0}, {"sku": "BROOKEBOND RLTP CHARGE ROLL EKT2X5KG", "channel": "Ecom", "customer": "", "target_uos": 40.0}, {"sku": "LIPTON TB ENG BRKFST ENV EKT 24X25X2G", "channel": "Ecom", "customer": "", "target_uos": 10.0}, {"sku": "LIPTON TB EARL GREY ENV EKT 24X25X1.5G", "channel": "Ecom", "customer": "", "target_uos": 10.0}, {"sku": "LIPTON TB ENG BRKFST ENV EKT 12X50X2G", "channel": "Ecom", "customer": "", "target_uos": 25.0}, {"sku": "LIPTON TB EARL GREY ENV EKT 12X50X1.5G", "channel": "Ecom", "customer": "", "target_uos": 25.0}, {"sku": "LIPTON GT PUR ENV  THOR 24X25X1.5G", "channel": "Ecom", "customer": "", "target_uos": 20.0}, {"sku": "LIPTON GT LEM ENV  THOR 24X25X1.3G", "channel": "Ecom", "customer": "", "target_uos": 15.0}, {"sku": "LIPTON GT MIN ENV  THOR24X25X1.3G", "channel": "Ecom", "customer": "", "target_uos": 40.0}, {"sku": "LIPTON GT PUR ENV  THOR 12X50X1.5G", "channel": "Ecom", "customer": "", "target_uos": 120.0}, {"sku": "LIPTON GT LEM ENV  THOR 12X50X1.3G", "channel": "Ecom", "customer": "", "target_uos": 45.0}, {"sku": "LIPTON GT MIN ENV  THOR12X50X1.3G", "channel": "Ecom", "customer": "", "target_uos": 120.0}, {"sku": "BROOKEBOND TP LAAL 24X400G", "channel": "Ecom", "customer": "", "target_uos": 40.0}, {"sku": "LIPTON YLTB FRESH 555 16X200X2G", "channel": "Ecom", "customer": "", "target_uos": 90.0}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "channel": "Ecom", "customer": "", "target_uos": 120.0}, {"sku": "LIPTON YLTP Y23 48X200G", "channel": "Ecom", "customer": "", "target_uos": 10.0}, {"sku": "LIPTON YLTP Y23 12X800G", "channel": "Ecom", "customer": "", "target_uos": 50.0}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "channel": "Ecom", "customer": "", "target_uos": 20.0}, {"sku": "LIPTON YLTP Y23 24X400G", "channel": "Ecom", "customer": "", "target_uos": 150.0}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "channel": "Ecom", "customer": "", "target_uos": 200.0}, {"sku": "LIPTON GTB FRESHNESS MINT 12X100X1.3G", "channel": "Ecom", "customer": "", "target_uos": 50.0}, {"sku": "LIPTON GTB FRESHNESS PURE 12X100X1.5G", "channel": "Ecom", "customer": "", "target_uos": 50.0}, {"sku": "BROOKEBOND TP LAAL 12X800G", "channel": "Ecom", "customer": "", "target_uos": 10.0}, {"sku": "LIPTON GTB LEM EKT 12X100X1.5G promo", "channel": "Ecom", "customer": "", "target_uos": 20.0}, {"sku": "PUKKA LEMN GINGR&MANKA HNY TB SEL4X20X2G", "channel": "Ecom", "customer": "", "target_uos": 80.0}, {"sku": "PUKKA THREE GINGER TB SEL 4X20X1.8G", "channel": "Ecom", "customer": "", "target_uos": 45.0}, {"sku": "PUKKA SUPREM MATCHA GREN TB SEL4X20X1.5G", "channel": "Ecom", "customer": "", "target_uos": 70.0}, {"sku": "PUKKA FEEL NEW TB SEL 4X20X2G", "channel": "Ecom", "customer": "", "target_uos": 70.0}, {"sku": "PUKKA CHAM,VANI&MANK HNY TB(SL)4X20X1.6G", "channel": "Ecom", "customer": "", "target_uos": 200.0}, {"sku": "PUKKA THREE MINT TB SEL 4X20X1.6G", "channel": "Ecom", "customer": "", "target_uos": 80.0}, {"sku": "Pukka Org Morning berry SEL 4x20x1.7g", "channel": "Ecom", "customer": "", "target_uos": 150.0}, {"sku": "Pukka Org Night time berry SEL 4x20x1.6g", "channel": "Ecom", "customer": "", "target_uos": 250.0}, {"sku": "LIPTON YLTB FRESH 555 24X100X2G", "channel": "Ecom", "customer": "", "target_uos": 1400.0}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "channel": "Ecom", "customer": "", "target_uos": 10.0}, {"sku": "LIPTON GT PUR ENV  THOR 24X25X1.5G", "channel": "Convenience", "customer": "", "target_uos": 3.0}, {"sku": "LIPTON GT LEM ENV  THOR 24X25X1.3G", "channel": "Convenience", "customer": "", "target_uos": 9.0}, {"sku": "LIPTON GT MIN ENV  THOR24X25X1.3G", "channel": "Convenience", "customer": "", "target_uos": 9.0}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "channel": "Convenience", "customer": "", "target_uos": 25.0}, {"sku": "LIPTON YLTP Y23 48X200G", "channel": "Convenience", "customer": "", "target_uos": 11.0}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "channel": "Convenience", "customer": "", "target_uos": 8.0}, {"sku": "LIPTON YLTP Y23 24X400G", "channel": "Convenience", "customer": "", "target_uos": 20.0}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "channel": "Convenience", "customer": "", "target_uos": 15.0}, {"sku": "BROOKEBOND TP LAAL 48X200G", "channel": "Convenience", "customer": "", "target_uos": 6.0}, {"sku": "LIPTON YLTB FRESH 555 24X100X2G", "channel": "Convenience", "customer": "", "target_uos": 27.0}]</script>
+<script id="chsales-data" type="application/json">[{"sku": "BROOKEBOND TP LAAL 48X200G", "channel": "RVS", "customer": "", "sales_uos": 1.543}, {"sku": "BROOKEBOND JAR LAAL 3P 12X370G", "channel": "RVS", "customer": "", "sales_uos": -4.25}, {"sku": "LIPTON YLTB FRESH 555 24X100X2G", "channel": "RVS", "customer": "", "sales_uos": -0.083}, {"sku": "LIPTON (HI) CAMOMILE DTTC EKT 16X20X1.0G", "channel": "RVS", "customer": "", "sales_uos": 0.753}, {"sku": "LIPTON GT LEM ENV  THOR 24X25X1.3G", "channel": "RVS", "customer": "", "sales_uos": 2.876}, {"sku": "LIPTON GT MIN ENV  THOR24X25X1.3G", "channel": "RVS", "customer": "", "sales_uos": 1.375}, {"sku": "LIPTON GTB FRESHNESS PURE 12X100X1.5G", "channel": "RVS", "customer": "", "sales_uos": 2.083}, {"sku": "LIPTON GTB FRESHNESS MINT 12X100X1.3G", "channel": "RVS", "customer": "", "sales_uos": -0.5}, {"sku": "LIPTON GTB LEM EKT 12X100X1.5G promo", "channel": "RVS", "customer": "", "sales_uos": 1.167}, {"sku": "LIPTON INF AFTER DINNER 16X20X1.5G", "channel": "RVS", "customer": "", "sales_uos": -1.0}, {"sku": "LIPTON INF SWEET NIGHTS 16X20X1.5G", "channel": "RVS", "customer": "", "sales_uos": -1.0}, {"sku": "LIPTON YLTP Y23 48X200G", "channel": "RVS", "customer": "", "sales_uos": 10.608}, {"sku": "LIPTON(HI) LEMN&GINER DTTC EKT16X20X1.6G", "channel": "RVS", "customer": "", "sales_uos": 2.626}, {"sku": "LIPTON (HI) HIBISCUS DTTC EKT 16X20X2G", "channel": "RVS", "customer": "", "sales_uos": 2.063}, {"sku": "LIPTON YLTB FRESH 555 16X200X2G", "channel": "RVS", "customer": "", "sales_uos": -8.874}, {"sku": "LIPTON YLTB CATERING 555 36X100X2G", "channel": "RVS", "customer": "", "sales_uos": 2.25}, {"sku": "BROOKEBOND TP LAAL 24X400G", "channel": "KA", "customer": "Oth MT", "sales_uos": 14.0}, {"sku": "LIPTON YLTP Y23 24X400G", "channel": "KA", "customer": "Oth MT", "sales_uos": 8.0}, {"sku": "LIPTON (HI)PEPERMINT DTTC EKT 16X20X1.8G", "channel": "KA", "customer": "Oth MT", "sales_uos": 2.0}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "channel": "KA", "customer": "Othaim", "sales_uos": 65.0}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "channel": "KA", "customer": "Othaim", "sales_uos": 12.0}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "channel": "KA", "customer": "Othaim", "sales_uos": 26.0}, {"sku": "LIPTON(HI) LEMN&GINER DTTC EKT16X20X1.6G", "channel": "KA", "customer": "Othaim", "sales_uos": 21.0}, {"sku": "LIPTON (HI) CAMOMILE DTTC EKT 16X20X1.0G", "channel": "KA", "customer": "Othaim", "sales_uos": 32.0}, {"sku": "LIPTON (HI)ANISESEED DTTC EKT 16X20X1.6G", "channel": "KA", "customer": "Othaim", "sales_uos": 14.0}, {"sku": "LIPTON GT PUR ENV  THOR 12X50X1.5G", "channel": "KA", "customer": "Othaim", "sales_uos": 24.0}, {"sku": "BROOKEBOND TP LAAL 24X400G", "channel": "KA", "customer": "Panda", "sales_uos": 20.0}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "channel": "KA", "customer": "Oth MT", "sales_uos": 1.0}, {"sku": "LIPTON GT LEM ENV  THOR 24X25X1.3G", "channel": "KA", "customer": "Oth MT", "sales_uos": 1.0}, {"sku": "BROOKEBOND TB LAAL 36X100X2G", "channel": "RVS", "customer": "", "sales_uos": 8.416}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "channel": "RVS", "customer": "", "sales_uos": 17.92}, {"sku": "LIPTON YLTP Y23 24X400G", "channel": "RVS", "customer": "", "sales_uos": 7.044}, {"sku": "LIPTON (HI)PEPERMINT DTTC EKT 16X20X1.8G", "channel": "RVS", "customer": "", "sales_uos": 2.814}, {"sku": "LIPTON YLTP Y23 12X800G", "channel": "RVS", "customer": "", "sales_uos": 6.581}, {"sku": "BROOKEBOND TP LAAL 12X800G", "channel": "RVS", "customer": "", "sales_uos": 0.5}, {"sku": "LIPTON GT PUR ENV  THOR 24X25X1.5G", "channel": "RVS", "customer": "", "sales_uos": 0.083}, {"sku": "LIPTON YLTP KSA Y23 50X100G", "channel": "KA", "customer": "Oth MT", "sales_uos": 1.0}, {"sku": "LIPTON YLTB FRESH 555 PROMO 16X240X2G", "channel": "RVS", "customer": "", "sales_uos": 14.375}, {"sku": "LIPTON ESTB O2  36X100X2.2G", "channel": "RVS", "customer": "", "sales_uos": 2.864}, {"sku": "LIPTON (HI)ANISESEED DTTC EKT 16X20X1.6G", "channel": "RVS", "customer": "", "sales_uos": 1.251}, {"sku": "LIPTON YLTP EKT 2X5KG", "channel": "RVS", "customer": "", "sales_uos": 9.0}, {"sku": "LIPTON MATCHA PURE DTTC 3P 16X20X1.5G", "channel": "RVS", "customer": "", "sales_uos": 0.813}, {"sku": "Pukka Org Morning berry SEL 4x20x1.7g", "channel": "KA", "customer": "Panda", "sales_uos": 96.0}, {"sku": "LIPTON YLTB CADDY 555 24X25X2G", "channel": "RVS", "customer": "", "sales_uos": 1.672}, {"sku": "BROOKEBOND RLTP CHARGE ROLL EKT2X5KG", "channel": "RVS", "customer": "", "sales_uos": 1.0}, {"sku": "LIPTON Yellow label TP  6X1.6KG", "channel": "RVS", "customer": "", "sales_uos": 1.0}, {"sku": "BROOKEBOND TP 6x1.6KG", "channel": "RVS", "customer": "", "sales_uos": 1.0}]</script>
+<script>
+  // Minimal stand-in for the Claude dashboard runtime so the same page code runs on any web host.
+  (() => {
+    const inputs = JSON.parse(document.getElementById('sku-data').textContent);
+    const calcs = {}, order = [], draws = {}, onDataFns = [];
+    let params = { unit: 'sar', brand: 'All', status: 'All', basis: 'cur', channel: 'All', customer: 'All' }, cache = null;
+    const compute = () => {
+      if (cache) return cache;
+      cache = { sku_inputs: inputs, channel_targets: JSON.parse(document.getElementById('channel-data').textContent), channel_sales: JSON.parse(document.getElementById('chsales-data').textContent) };
+      order.forEach((id) => { const c = calcs[id]; cache[id] = c.fn(...c.inputs.map((i) => cache[i])); });
+      return cache;
+    };
+    const runDraw = (name) => document.querySelectorAll(`[data-draw="${name}"]`).forEach((el) => draws[name](el));
+    const runAll = () => { onDataFns.forEach((f) => f()); Object.keys(draws).forEach(runDraw); };
+    window.dash = {
+      calc: (id, o) => { calcs[id] = o; order.push(id); },
+      data: (id) => { const d = compute()[id]; return { status: 'ok', data: d, columns: d && d[0] ? Object.keys(d[0]) : [], meta: [] }; },
+      draw: (name, fn) => { if (fn) draws[name] = fn; else if (draws[name]) runDraw(name); },
+      onData: (fn) => { onDataFns.push(fn); },
+      params: () => ({ ...params }),
+      setParams: (p) => { params = { ...params, ...p }; runAll(); },
+      resetParams: () => { params = { unit: 'sar', brand: 'All', status: 'All', basis: 'cur', channel: 'All', customer: 'All' }; runAll(); },
+      colors: ['#0f5c4d', '#3a6ea5', 'var(--excess)'],
+      refresh: () => {}, setLink: () => {}, loader: () => {},
+      _run: runAll,
+    };
+    const fmt = (spec) => {
+      const m = /^(,?)\.(\d+)([f%])$/.exec(spec); const d = +m[2];
+      const nf = new Intl.NumberFormat('en', m[3] === '%' ? { style: 'percent', minimumFractionDigits: d, maximumFractionDigits: d } : { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: !!m[1] });
+      return (x) => nf.format(x);
+    };
+    window.d3 = { format: fmt, max: (a, f) => Math.max(...a.map(f)) };
+    let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(runAll, 150); });
+  })();
+</script>
+</head>
+<body>
+<div id="dash-root">
+<style>
+  .st-wrap { display: grid; gap: var(--cds-gap-lg); font-family: var(--font-anthropic-sans); font-variant-numeric: tabular-nums; }
+  .st-head { display: grid; gap: var(--cds-gap-xs); }
+  .st-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+  .st-period { font-size: var(--cds-font-size-caption); }
+  .st-take { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); max-width: 70ch; }
+  .st-wrap .st-take b { color: var(--color-fg); font-weight: 600; }
+  .st-controls { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
+  .st-seg { display: inline-flex; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); overflow: hidden; }
+  .st-seg button { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); background: var(--color-panel); color: var(--color-fg-muted); border: 0; cursor: pointer; }
+  .st-seg button[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); }
+  .st-seg button:focus-visible, .st-th:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .st-dl { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-md); border: 1px solid var(--color-fg); border-radius: var(--cds-radius); background: var(--color-fg); color: var(--color-bg); cursor: pointer; margin-inline-start: auto; }
+  .st-dl:disabled { opacity: .5; cursor: progress; }
+  .st-dl:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .st-dl-link { font-size: var(--cds-font-size-caption); color: var(--color-fg); text-decoration: underline; text-underline-offset: 2px; padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
+  .st-dl-link:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .st-dl-msg { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .st-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .st-kpis { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr)); }
+  .st-kpi { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md) var(--cds-pad-lg); display: grid; gap: var(--cds-gap-xs); align-content: start; }
+  .st-kpi-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .st-kpi-value { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.1; }
+  .st-kpi-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .st-kpi.is-bad .st-kpi-value { color: var(--color-bad); }
+  .st-kpi.is-warn .st-kpi-value { color: var(--color-warn); }
+  .st-grid { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); }
+  .st-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: grid; gap: var(--cds-gap-sm); align-content: start; min-width: 0; }
+  .st-card h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+  .st-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .st-bars { display: grid; gap: var(--cds-gap-xs); min-height: 6rem; }
+  .st-bar-row { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) auto; gap: var(--cds-gap-sm); align-items: center; font-size: var(--cds-font-size-caption); }
+  .st-bar-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .st-bar-track { height: 0.9rem; background: var(--cds-chart-grid); border-radius: var(--cds-radius); overflow: hidden; }
+  .st-bar-fill { height: 100%; border-radius: var(--cds-radius); }
+  .st-bar-val { text-align: right; min-width: 5.5rem; }
+  .st-empty { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  @media (max-width: 560px) { .st-bar-row { grid-template-columns: minmax(0, 1fr) auto; } .st-bar-track { grid-column: 1 / -1; grid-row: 2; } }
+  .st-table-box { overflow: auto; max-height: 36rem; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
+  .st-table { border-collapse: collapse; width: 100%; font-size: var(--cds-font-size-caption); }
+  .st-table th, .st-table td { padding: var(--cds-pad-xs) var(--cds-pad-sm); text-align: right; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .st-table th:first-child, .st-table td:first-child, .st-table .t-txt { text-align: left; }
+  .st-table td:first-child { white-space: normal; min-width: 14rem; }
+  .st-table th { position: sticky; top: 0; background: var(--color-panel); font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); z-index: 1; }
+  .st-th { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  .st-table:not(.u-sar) .c-sar, .st-table:not(.u-uos) .c-uos, .st-table:not(.u-ton) .c-ton { display: none; }
+  .st-table:not(.b-cur) .b-cur, .st-table:not(.b-cif) .b-cif, .st-table:not(.b-dplc) .b-dplc, .st-table:not(.b-bptt) .b-bptt { display: none; }
+  .st-table tfoot td { font-weight: 600; }
+  .st-pill { display: inline-block; padding: 0 var(--cds-pad-xs); border-radius: 999px; border: 1px solid currentColor; font-size: var(--cds-font-size-caption); }
+  .st-pill.s-bad { color: var(--color-bad); } .st-pill.s-warn { color: var(--color-warn); } .st-pill.s-ok { color: var(--color-ok); } .st-pill.s-muted { color: var(--color-fg-muted); }
+  .st-neg { color: var(--color-bad); } .st-pos { color: var(--color-warn); }
+  .st-search { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); min-width: 0; flex: 1 1 12rem; max-width: 22rem; }
+  .st-wrap details { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .st-wrap details dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--cds-gap-xs) var(--cds-gap-md); }
+  .st-wrap details dt { color: var(--color-fg); }
+  [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+</style>
+
+<div class="st-wrap">
+  <header class="st-head" id="overview">
+    <h1 class="st-title">Nov stock &amp; gap tracker</h1>
+    <p class="st-take"><b data-draw="tk-short">—</b> of <b data-draw="tk-n">—</b> SKUs with a November target are short of stock, a shortage of <b data-draw="tk-gap">—</b>. <b data-draw="tk-focus">—</b> SKUs hold <b data-draw="tk-excess">—</b> above target that needs sell-out focus.</p>
+    <p class="st-take st-period">Nov sales to date: 1–3 Nov 2026 (DSR file as till 02.11.2026). Opening stock: 1 Nov.</p>
+  </header>
+
+  <div class="st-controls">
+    <span class="st-label">Show in</span>
+    <div class="st-seg" role="group" aria-label="Unit">
+      <button type="button" class="st-unit" data-unit="sar" aria-pressed="true">SAR</button>
+      <button type="button" class="st-unit" data-unit="uos" aria-pressed="false">Cases</button>
+      <button type="button" class="st-unit" data-unit="ton" aria-pressed="false">Tons</button>
+    </div>
+    <span class="st-label">Value basis</span>
+    <select id="st-basis" class="dash-select st-basis" aria-label="Value basis">
+      <option value="cur">Current value</option>
+      <option value="cif">CIF</option>
+      <option value="dplc">DPLC</option>
+      <option value="bptt">BPTT</option>
+    </select>
+    <span class="st-label">Brand</span>
+    <select id="st-brand" class="dash-select st-brand" aria-label="Brand">
+      <option value="All">All brands</option>
+      <option value="Lipton">Lipton</option>
+      <option value="Brooke Bond">Brooke Bond</option>
+      <option value="Pukka">Pukka</option>
+    </select>
+    <span class="st-label">Channel</span>
+    <select id="st-channel" class="dash-select st-channel" aria-label="Channel">
+      <option value="All">All channels</option>
+      <option value="KA">KA</option>
+      <option value="WS">WS</option>
+      <option value="RVS">RVS</option>
+      <option value="OOH">OOH</option>
+      <option value="VFM">VFM</option>
+      <option value="Ecom">Ecom</option>
+      <option value="LSM">LSM</option>
+      <option value="Convenience">Convenience</option>
+      <option value="Unallocated">Unallocated</option>
+    </select>
+    <select id="st-customer" class="dash-select st-customer" aria-label="KA customer">
+      <option value="All">All KA customers</option>
+      <option value="Panda">Panda</option>
+      <option value="Lulu">Lulu</option>
+      <option value="BDG">BDG</option>
+      <option value="Tamimi">Tamimi</option>
+      <option value="Othaim">Othaim</option>
+      <option value="Farm">Farm</option>
+      <option value="Oth MT">Oth MT</option>
+    </select>
+    <button type="button" id="st-download" class="st-dl" aria-label="Download Excel workbook">Download Excel</button>
+    <a id="st-drive" class="st-dl-link" href="https://drive.google.com/uc?export=download&amp;id=1VmMOt2BgRtkIIuo4nD3wrmoUo3jOmJ3e" target="_blank" rel="noopener">Excel from Google Drive</a>
+    <span class="st-dl-msg st-dl-saved" hidden>Excel file saved.</span>
+    <span class="st-dl-msg st-dl-declined" hidden>Download cancelled.</span>
+    <span class="st-dl-msg st-dl-direct" hidden>Your download should start now.</span>
+    <span class="st-dl-msg st-dl-none" hidden>Excel download isn’t available in this view.</span>
+    <span class="st-dl-msg st-dl-error" hidden>The Excel file couldn’t be created. Try again.</span>
+  </div>
+
+  <section class="st-kpis" id="kpis" aria-label="Headline figures">
+    <div class="st-kpi" id="kpi-target"><span class="st-kpi-label">Nov target</span><span class="st-kpi-value" data-draw="kpi" data-metric="target">—</span><span class="st-kpi-note st-all-only">Full month</span><span class="st-kpi-note st-ch-only" hidden>Full month, selected channel</span></div>
+    <div class="st-kpi" id="kpi-sales"><span class="st-kpi-label">Nov sales to date</span><span class="st-kpi-value" data-draw="kpi" data-metric="sales">—</span><span class="st-kpi-note">Achievement <span data-draw="kpi-ach">—</span></span><span class="st-kpi-note st-ch-only" hidden>Selected channel</span></div>
+    <div class="st-kpi" id="kpi-avail"><span class="st-kpi-label">Available stock</span><span class="st-kpi-value" data-draw="kpi" data-metric="avail">—</span><span class="st-kpi-note">Opening + Nov releases − Nov sales</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
+    <div class="st-kpi is-bad" id="kpi-gap"><span class="st-kpi-label">Gap (shortage only)</span><span class="st-kpi-value" data-draw="kpi" data-metric="gap">—</span><span class="st-kpi-note">Short SKUs only, no offset</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
+    <div class="st-kpi is-warn" id="kpi-excess"><span class="st-kpi-label">Excess above target</span><span class="st-kpi-value" data-draw="kpi" data-metric="excess">—</span><span class="st-kpi-note">Stock to push</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
+    <div class="st-kpi" id="kpi-net"><span class="st-kpi-label">Net gap</span><span class="st-kpi-value" data-draw="kpi" data-metric="net">—</span><span class="st-kpi-note">Gap + excess</span><span class="st-kpi-note st-ch-only" hidden>All channels: stock isn’t split by channel</span></div>
+  </section>
+
+  <div class="st-grid">
+    <section class="st-card" id="top-gaps">
+      <h2>Biggest shortages</h2>
+      <p class="st-note">Top 12 SKUs by gap against remaining November target.</p>
+      <div class="st-bars" data-draw="bars-gap" data-source="sku_view"></div>
+    </section>
+    <section class="st-card" id="focus">
+      <h2>Excess stock that needs focus</h2>
+      <p class="st-note">Top 12 SKUs with available stock above remaining target.</p>
+      <div class="st-bars" data-draw="bars-excess" data-source="sku_view"></div>
+    </section>
+  </div>
+
+  <section class="st-card" id="by-brand">
+    <h2>By brand</h2>
+    <p class="st-note">Gap and excess are summed per SKU, so excess on one SKU never offsets a shortage on another.</p>
+    <div class="st-table-box">
+      <table class="st-table u-sar b-cur" data-source="totals" data-row-key="brand">
+        <thead><tr>
+          <th data-field="brand">Brand</th>
+          <th data-field="skus">SKUs</th>
+          <th data-field="n_short">Short</th>
+          <th data-field="n_focus">Focus</th>
+          <th class="c-sar b-cur" data-field="target_cur">Target</th><th class="c-sar b-cif" data-field="target_cif">Target</th><th class="c-sar b-dplc" data-field="target_dplc">Target</th><th class="c-sar b-bptt" data-field="target_bptt">Target</th><th class="c-uos" data-field="target_uos">Target</th><th class="c-ton" data-field="target_ton">Target</th>
+          <th class="c-sar b-cur" data-field="sales_cur">Sales</th><th class="c-sar b-cif" data-field="sales_cif">Sales</th><th class="c-sar b-dplc" data-field="sales_dplc">Sales</th><th class="c-sar b-bptt" data-field="sales_bptt">Sales</th><th class="c-uos" data-field="sales_uos">Sales</th><th class="c-ton" data-field="sales_ton">Sales</th>
+          <th class="c-sar b-cur" data-field="avail_cur">Available</th><th class="c-sar b-cif" data-field="avail_cif">Available</th><th class="c-sar b-dplc" data-field="avail_dplc">Available</th><th class="c-sar b-bptt" data-field="avail_bptt">Available</th><th class="c-uos" data-field="avail_uos">Available</th><th class="c-ton" data-field="avail_ton">Available</th>
+          <th class="c-sar b-cur" data-field="gap_cur">Gap</th><th class="c-sar b-cif" data-field="gap_cif">Gap</th><th class="c-sar b-dplc" data-field="gap_dplc">Gap</th><th class="c-sar b-bptt" data-field="gap_bptt">Gap</th><th class="c-uos" data-field="gap_uos">Gap</th><th class="c-ton" data-field="gap_ton">Gap</th>
+          <th class="c-sar b-cur" data-field="excess_cur">Excess</th><th class="c-sar b-cif" data-field="excess_cif">Excess</th><th class="c-sar b-dplc" data-field="excess_dplc">Excess</th><th class="c-sar b-bptt" data-field="excess_bptt">Excess</th><th class="c-uos" data-field="excess_uos">Excess</th><th class="c-ton" data-field="excess_ton">Excess</th>
+          <th class="c-sar b-cur" data-field="net_cur">Net gap</th><th class="c-sar b-cif" data-field="net_cif">Net gap</th><th class="c-sar b-dplc" data-field="net_dplc">Net gap</th><th class="c-sar b-bptt" data-field="net_bptt">Net gap</th><th class="c-uos" data-field="net_uos">Net gap</th><th class="c-ton" data-field="net_ton">Net gap</th>
+        </tr></thead>
+        <tbody data-draw="brand-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="st-grid">
+    <section class="st-card" id="by-channel">
+      <h2>Target by channel</h2>
+      <p class="st-note">November target and sales to date by channel; Ach. = sales ÷ target in cases. Click a channel to list its SKUs below. Unallocated is SKU target the channel file doesn’t assign to a channel.</p>
+      <div class="st-table-box">
+        <table class="st-table u-sar b-cur st-ch-table" data-source="channel_totals" data-row-key="row_key">
+          <thead><tr><th data-field="name">Channel</th><th data-field="skus">SKUs</th><th class="c-sar b-cur" data-field="target_cur">Target</th><th class="c-sar b-cif" data-field="target_cif">Target</th><th class="c-sar b-dplc" data-field="target_dplc">Target</th><th class="c-sar b-bptt" data-field="target_bptt">Target</th><th class="c-uos" data-field="target_uos">Target</th><th class="c-ton" data-field="target_ton">Target</th><th class="c-sar b-cur" data-field="sales_cur">Sales</th><th class="c-sar b-cif" data-field="sales_cif">Sales</th><th class="c-sar b-dplc" data-field="sales_dplc">Sales</th><th class="c-sar b-bptt" data-field="sales_bptt">Sales</th><th class="c-uos" data-field="sales_uos">Sales</th><th class="c-ton" data-field="sales_ton">Sales</th><th data-field="achievement">Ach.</th><th class="c-sar b-cur" data-field="share_cur">Share</th><th class="c-sar b-cif" data-field="share_cif">Share</th><th class="c-sar b-dplc" data-field="share_dplc">Share</th><th class="c-sar b-bptt" data-field="share_bptt">Share</th><th class="c-uos" data-field="share_uos">Share</th><th class="c-ton" data-field="share_ton">Share</th></tr></thead>
+          <tbody data-draw="ch-body"></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="st-card" id="by-customer">
+      <h2>Key accounts by customer</h2>
+      <p class="st-note">KA target and sales to date by customer. Click a customer to list its SKUs below.</p>
+      <div class="st-table-box">
+        <table class="st-table u-sar b-cur st-cu-table" data-source="channel_totals" data-row-key="row_key">
+          <thead><tr><th data-field="name">Customer</th><th data-field="skus">SKUs</th><th class="c-sar b-cur" data-field="target_cur">Target</th><th class="c-sar b-cif" data-field="target_cif">Target</th><th class="c-sar b-dplc" data-field="target_dplc">Target</th><th class="c-sar b-bptt" data-field="target_bptt">Target</th><th class="c-uos" data-field="target_uos">Target</th><th class="c-ton" data-field="target_ton">Target</th><th class="c-sar b-cur" data-field="sales_cur">Sales</th><th class="c-sar b-cif" data-field="sales_cif">Sales</th><th class="c-sar b-dplc" data-field="sales_dplc">Sales</th><th class="c-sar b-bptt" data-field="sales_bptt">Sales</th><th class="c-uos" data-field="sales_uos">Sales</th><th class="c-ton" data-field="sales_ton">Sales</th><th data-field="achievement">Ach.</th><th class="c-sar b-cur" data-field="share_cur">Share of KA</th><th class="c-sar b-cif" data-field="share_cif">Share of KA</th><th class="c-sar b-dplc" data-field="share_dplc">Share of KA</th><th class="c-sar b-bptt" data-field="share_bptt">Share of KA</th><th class="c-uos" data-field="share_uos">Share of KA</th><th class="c-ton" data-field="share_ton">Share of KA</th></tr></thead>
+          <tbody data-draw="cu-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <section class="st-card" id="channel-skus">
+    <h2>Channel target by SKU</h2>
+    <p class="st-note">Each channel’s target per SKU for the channel and customer picked at the top, next to the SKU’s total available stock and status. Stock isn’t split by channel.</p>
+    <div class="st-controls">
+      <input id="st-ch-search" class="st-search st-ch-search" type="search" placeholder="Search SKU" aria-label="Search SKU in channel table">
+    </div>
+    <div class="st-table-box">
+      <table class="st-table u-sar b-cur st-chsku-table" data-source="channel_view" data-row-key="key">
+        <thead><tr><th data-field="sku">SKU</th><th class="t-txt" data-field="channel">Channel</th><th class="t-txt" data-field="customer">Customer</th><th class="c-sar b-cur" data-field="target_cur">Channel target</th><th class="c-sar b-cif" data-field="target_cif">Channel target</th><th class="c-sar b-dplc" data-field="target_dplc">Channel target</th><th class="c-sar b-bptt" data-field="target_bptt">Channel target</th><th class="c-uos" data-field="target_uos">Channel target</th><th class="c-ton" data-field="target_ton">Channel target</th><th class="c-sar b-cur" data-field="sales_cur">Channel sales</th><th class="c-sar b-cif" data-field="sales_cif">Channel sales</th><th class="c-sar b-dplc" data-field="sales_dplc">Channel sales</th><th class="c-sar b-bptt" data-field="sales_bptt">Channel sales</th><th class="c-uos" data-field="sales_uos">Channel sales</th><th class="c-ton" data-field="sales_ton">Channel sales</th><th data-field="achievement">Ach.</th><th data-field="share_of_sku">Share of SKU target</th><th class="c-sar b-cur" data-field="avail_cur">SKU available</th><th class="c-sar b-cif" data-field="avail_cif">SKU available</th><th class="c-sar b-dplc" data-field="avail_dplc">SKU available</th><th class="c-sar b-bptt" data-field="avail_bptt">SKU available</th><th class="c-uos" data-field="avail_uos">SKU available</th><th class="c-ton" data-field="avail_ton">SKU available</th><th class="t-txt" data-field="status">SKU status</th></tr></thead>
+        <tbody data-draw="chsku-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="st-card" id="skus">
+    <h2>All SKUs</h2>
+    <p class="st-note">Click a column to sort. Remaining target = Nov target − Nov sales to date.</p>
+    <div class="st-controls">
+      <input id="st-search" class="st-search" type="search" placeholder="Search SKU" aria-label="Search SKU">
+      <select id="st-status" class="dash-select st-status" aria-label="Status">
+        <option value="All">All statuses</option>
+        <option value="Shortage">Shortage</option>
+        <option value="Excess – focus">Excess – focus</option>
+        <option value="On target">On target</option>
+        <option value="No stock SKU">No stock SKU</option>
+      </select>
+    </div>
+    <div class="st-table-box">
+      <table class="st-table u-sar b-cur st-sku-table" data-source="sku_view" data-row-key="sku">
+        <thead><tr>
+          <th data-field="sku"><button type="button" class="st-th" data-sort="sku">SKU</button></th>
+          <th class="t-txt" data-field="brand"><button type="button" class="st-th" data-sort="brand">Brand</button></th>
+          <th class="t-txt" data-field="status"><button type="button" class="st-th" data-sort="status">Status</button></th>
+          <th class="c-sar b-cur" data-field="target_cur"><button type="button" class="st-th" data-sort="target">Target</button></th><th class="c-sar b-cif" data-field="target_cif"><button type="button" class="st-th" data-sort="target">Target</button></th><th class="c-sar b-dplc" data-field="target_dplc"><button type="button" class="st-th" data-sort="target">Target</button></th><th class="c-sar b-bptt" data-field="target_bptt"><button type="button" class="st-th" data-sort="target">Target</button></th><th class="c-uos" data-field="nov_target"><button type="button" class="st-th" data-sort="target">Target</button></th><th class="c-ton" data-field="target_ton"><button type="button" class="st-th" data-sort="target">Target</button></th>
+          <th class="c-sar b-cur" data-field="sales_cur"><button type="button" class="st-th" data-sort="sales">Sales</button></th><th class="c-sar b-cif" data-field="sales_cif"><button type="button" class="st-th" data-sort="sales">Sales</button></th><th class="c-sar b-dplc" data-field="sales_dplc"><button type="button" class="st-th" data-sort="sales">Sales</button></th><th class="c-sar b-bptt" data-field="sales_bptt"><button type="button" class="st-th" data-sort="sales">Sales</button></th><th class="c-uos" data-field="nov_sales"><button type="button" class="st-th" data-sort="sales">Sales</button></th><th class="c-ton" data-field="sales_ton"><button type="button" class="st-th" data-sort="sales">Sales</button></th>
+          <th class="c-sar b-cur" data-field="avail_cur"><button type="button" class="st-th" data-sort="avail">Available</button></th><th class="c-sar b-cif" data-field="avail_cif"><button type="button" class="st-th" data-sort="avail">Available</button></th><th class="c-sar b-dplc" data-field="avail_dplc"><button type="button" class="st-th" data-sort="avail">Available</button></th><th class="c-sar b-bptt" data-field="avail_bptt"><button type="button" class="st-th" data-sort="avail">Available</button></th><th class="c-uos" data-field="available"><button type="button" class="st-th" data-sort="avail">Available</button></th><th class="c-ton" data-field="avail_ton"><button type="button" class="st-th" data-sort="avail">Available</button></th>
+          <th class="c-sar b-cur" data-field="gap_cur"><button type="button" class="st-th" data-sort="gap">Gap</button></th><th class="c-sar b-cif" data-field="gap_cif"><button type="button" class="st-th" data-sort="gap">Gap</button></th><th class="c-sar b-dplc" data-field="gap_dplc"><button type="button" class="st-th" data-sort="gap">Gap</button></th><th class="c-sar b-bptt" data-field="gap_bptt"><button type="button" class="st-th" data-sort="gap">Gap</button></th><th class="c-uos" data-field="gap"><button type="button" class="st-th" data-sort="gap">Gap</button></th><th class="c-ton" data-field="gap_ton"><button type="button" class="st-th" data-sort="gap">Gap</button></th>
+          <th class="c-sar b-cur" data-field="excess_cur"><button type="button" class="st-th" data-sort="excess">Excess</button></th><th class="c-sar b-cif" data-field="excess_cif"><button type="button" class="st-th" data-sort="excess">Excess</button></th><th class="c-sar b-dplc" data-field="excess_dplc"><button type="button" class="st-th" data-sort="excess">Excess</button></th><th class="c-sar b-bptt" data-field="excess_bptt"><button type="button" class="st-th" data-sort="excess">Excess</button></th><th class="c-uos" data-field="excess"><button type="button" class="st-th" data-sort="excess">Excess</button></th><th class="c-ton" data-field="excess_ton"><button type="button" class="st-th" data-sort="excess">Excess</button></th>
+          <th data-field="cover"><button type="button" class="st-th" data-sort="cover">Cover</button></th>
+        </tr></thead>
+        <tbody data-draw="sku-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <details id="definitions">
+    <summary>How the numbers are worked out</summary>
+    <dl>
+      <dt>Available stock</dt><dd>Nov opening SOH (Oct opening + Oct released − Oct sales, negatives set to 0) + Nov releases − Nov sales to date, never below 0.</dd>
+      <dt>Remaining target</dt><dd>Nov target − Nov sales to date.</dd>
+      <dt>Gap</dt><dd>MIN(0, available − remaining target), per SKU.</dd>
+      <dt>Excess</dt><dd>MAX(0, available − remaining target), per SKU. Shown as “Excess – focus”.</dd>
+      <dt>Net gap</dt><dd>Gap + excess.</dd>
+      <dt>Tons</dt><dd>UOS ÷ cases per ton (CPT) from your price file. SKUs without a CPT (target lines with no stock SKU, and BROOKEBOND TB KSA with CPT 0) count as 0 Tons.</dd>
+      <dt>Cover</dt><dd>Available stock ÷ remaining target.</dd>
+      <dt>SAR values</dt><dd>UOS × the SKU's value per case on the basis you pick: Current value (the value list you shared first), CIF, DPLC or BPTT (LC per case, from the price file). Target lines with no stock SKU (HI 24X20 packs, Pukka Feel New and others) and Pukka After Dinner (not in the price file) have no value, so they count in UOS only.</dd>
+      <dt>Channel targets</dt><dd>From your Target by channel file (KA by customer, WS, RVS, OOH, VFM, Ecom, LSM, Convenience). Matcha DTTC, Inf After Meal and Inf Quiet Moments there are the SKU list’s Matcha 3P, Inf After Dinner and Inf Time to Chill. Unallocated = SKU target − channel targets (HI 24X20 packs).</dd>
+      <dt>Nov sales</dt><dd>From the daily sales report (DSR), November invoice dates only, net of returns. DSR channels: Key Accounts = KA, HTS is counted under RVS, Wholesale = WS, Supermarket = LSM, Convinience = Convenience. KA customers: Panda Retail = Panda, Aswaq Abdullah Al Othaim = Othaim, Saudi Hypermarkets (Carrefour) = Oth MT.</dd>
+      <dt>Left out</dt><dd>Lipton T&amp;I HTS Cups, removed at your request.</dd>
+    </dl>
+  </details>
+</div>
+
+<script>
+  dash.calc('sku_view', {
+    title: 'SKU stock vs remaining target',
+    description: 'Available stock, remaining target, gap and excess per SKU, in UOS, in Tons (UOS ÷ cases per ton) and in SAR on each value basis (current, CIF, DPLC, BPTT).',
+    inputs: ['sku_inputs'],
+    fn: (sku_inputs) => sku_inputs.map((r) => {
+      const opening = Number(r.nov_opening) || 0, released = Number(r.nov_released) || 0, sales = Number(r.nov_sales) || 0;
+      const target = Number(r.nov_target) || 0;
+      const prices = { cur: r.price_sar, cif: r.price_cif, dplc: r.price_dplc, bptt: r.price_bptt };
+      const cpt = r.cpt ? Number(r.cpt) : null;
+      const t = (x) => (cpt ? x / cpt : 0);
+      const available = Math.max(0, opening + released - sales);
+      const remaining = Math.max(0, target - sales);
+      const diff = available - remaining;
+      const gap = Math.min(0, diff), excess = Math.max(0, diff);
+      const status = !r.stock_sku ? 'No stock SKU' : gap < -0.5 ? 'Shortage' : excess > 0.5 ? 'Excess – focus' : 'On target';
+      const out = {
+        sku: r.sku, brand: r.brand, stock_sku: r.stock_sku, status,
+        price_cur: r.price_sar == null ? null : Number(r.price_sar), price_cif: r.price_cif == null ? null : Number(r.price_cif),
+        price_dplc: r.price_dplc == null ? null : Number(r.price_dplc), price_bptt: r.price_bptt == null ? null : Number(r.price_bptt),
+        nov_opening: opening, nov_released: released, nov_sales: sales, nov_target: target,
+        available, remaining_target: remaining, gap, excess, net: gap + excess,
+        cover: remaining > 0 ? available / remaining : null,
+      };
+      Object.assign(out, { cpt, target_ton: t(target), sales_ton: t(sales), avail_ton: t(available), gap_ton: t(gap), excess_ton: t(excess), net_ton: t(gap + excess) });
+      Object.entries(prices).forEach(([b, p]) => {
+        const v = (x) => (p == null ? 0 : x * Number(p));
+        Object.assign(out, { ['target_' + b]: v(target), ['sales_' + b]: v(sales), ['avail_' + b]: v(available), ['gap_' + b]: v(gap), ['excess_' + b]: v(excess), ['net_' + b]: v(gap + excess) });
+      });
+      return out;
+    }),
+  });
+
+  dash.calc('totals', {
+    title: 'Totals by brand',
+    description: 'Per-SKU figures summed for all brands and for each brand.',
+    inputs: ['sku_view'],
+    fn: (sku_view) => ['All', 'Lipton', 'Brooke Bond', 'Pukka'].map((brand) => {
+      const rs = sku_view.filter((r) => brand === 'All' || r.brand === brand);
+      const sum = (k) => rs.reduce((a, r) => a + r[k], 0);
+      const target_uos = sum('nov_target'), sales_uos = sum('nov_sales');
+      return {
+        brand, skus: rs.filter((r) => r.nov_target > 0).length,
+        n_short: rs.filter((r) => r.status === 'Shortage' || (r.status === 'No stock SKU' && r.nov_target > 0)).length,
+        n_focus: rs.filter((r) => r.status === 'Excess – focus').length,
+        target_uos, sales_uos, avail_uos: sum('available'), gap_uos: sum('gap'), excess_uos: sum('excess'), net_uos: sum('net'),
+        achievement: target_uos > 0 ? sales_uos / target_uos : 0,
+        ...Object.fromEntries(['cur', 'cif', 'dplc', 'bptt', 'ton'].flatMap((b) => ['target', 'sales', 'avail', 'gap', 'excess', 'net'].map((m) => [m + '_' + b, sum(m + '_' + b)]))),
+      };
+    }),
+  });
+
+
+  const UNITS = ['uos', 'ton', 'cur', 'cif', 'dplc', 'bptt'];
+  dash.calc('channel_view', {
+    title: 'Channel target by SKU',
+    description: 'Each channel and KA customer target and Nov sales to date per SKU in cases, Tons and SAR on each value basis, with the SKU’s available stock; SKU target not assigned to a channel shows as Unallocated.',
+    inputs: ['channel_targets', 'channel_sales', 'sku_view'],
+    fn: (channel_targets, channel_sales, sku_view) => {
+      const bySku = new Map(sku_view.map((r) => [r.sku, r]));
+      const assigned = new Map();
+      channel_targets.forEach((c) => assigned.set(c.sku, (assigned.get(c.sku) || 0) + Number(c.target_uos)));
+      const lineMap = new Map();
+      const line = (sku, channel, customer) => {
+        const k = channel + '|' + (customer || '') + '|' + sku;
+        if (!lineMap.has(k)) lineMap.set(k, { sku, channel, customer: customer || '', q: 0, sq: 0 });
+        return lineMap.get(k);
+      };
+      channel_targets.forEach((c) => { line(c.sku, c.channel, c.customer).q += Number(c.target_uos); });
+      sku_view.forEach((r) => { const left = r.nov_target - (assigned.get(r.sku) || 0); if (left > 0.5) line(r.sku, 'Unallocated', '').q += left; });
+      channel_sales.forEach((c) => { line(c.sku, c.channel, c.customer).sq += Number(c.sales_uos); });
+      return [...lineMap.values()].filter((l) => bySku.has(l.sku)).map((l) => {
+        const s = bySku.get(l.sku), q = l.q, sq = l.sq;
+        const f = { uos: 1, ton: s.cpt ? 1 / s.cpt : 0, cur: s.price_cur || 0, cif: s.price_cif || 0, dplc: s.price_dplc || 0, bptt: s.price_bptt || 0 };
+        const out = { key: l.channel + '|' + l.customer + '|' + l.sku, sku: l.sku, brand: s.brand, channel: l.channel, customer: l.customer, status: s.status,
+          share_of_sku: s.nov_target > 0 ? q / s.nov_target : null, achievement: q > 0 ? sq / q : null };
+        Object.entries(f).forEach(([u, k]) => { out['target_' + u] = q * k; out['sales_' + u] = sq * k; out['avail_' + u] = u === 'uos' ? s.available : u === 'ton' ? s.avail_ton : s['avail_' + u]; });
+        return out;
+      });
+    },
+  });
+
+  dash.calc('channel_totals', {
+    title: 'Target by channel and KA customer',
+    description: 'Channel and KA customer targets and Nov sales to date summed per brand, with each one’s share of the total target and achievement (sales ÷ target, in cases).',
+    inputs: ['channel_view'],
+    fn: (channel_view) => {
+      const out = [];
+      ['All', 'Lipton', 'Brooke Bond', 'Pukka'].forEach((brand) => {
+        const rs = channel_view.filter((r) => brand === 'All' || r.brand === brand);
+        const add = (level, name, sub, base) => {
+          const row = { row_key: brand + '|' + level + '|' + name, brand, level, name, skus: new Set(sub.filter((r) => r.target_uos > 0.0001).map((r) => r.sku)).size };
+          ['uos', 'ton', 'cur', 'cif', 'dplc', 'bptt'].forEach((u) => {
+            const t = sub.reduce((a, r) => a + r['target_' + u], 0), b = base.reduce((a, r) => a + r['target_' + u], 0);
+            row['target_' + u] = t; row['share_' + u] = b > 0 ? t / b : 0;
+            row['sales_' + u] = sub.reduce((a, r) => a + r['sales_' + u], 0);
+          });
+          row.achievement = row.target_uos > 0 ? row.sales_uos / row.target_uos : 0;
+          out.push(row);
+        };
+        ['KA', 'WS', 'RVS', 'OOH', 'VFM', 'Ecom', 'LSM', 'Convenience', 'Unallocated'].forEach((c) => add('channel', c, rs.filter((r) => r.channel === c), rs));
+        const ka = rs.filter((r) => r.channel === 'KA');
+        ['Panda', 'Lulu', 'BDG', 'Tamimi', 'Othaim', 'Farm', 'Oth MT'].forEach((c) => add('customer', c, ka.filter((r) => r.customer === c), ka));
+      });
+      return out;
+    },
+  });
+
+  window.stState = { sort: 'gap', dir: 1, q: '', cq: '' };
+  const unitOf = () => dash.params().unit || 'sar';
+  const brandOf = () => dash.params().brand || 'All';
+  const basisOf = () => dash.params().basis || 'cur';
+  const sfx = () => (unitOf() === 'sar' ? basisOf() : unitOf());
+  const chPick = () => {
+    const ch = dash.params().channel || 'All', cu = dash.params().customer || 'All';
+    if (ch === 'All' && cu === 'All') return null;
+    return cu !== 'All' ? { level: 'customer', name: cu } : { level: 'channel', name: ch };
+  };
+  const compact = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 2 });
+  const fmtUnit = (x, unit, short) => {
+    if (unit === 'sar') return 'SAR ' + (short ? compact.format(x) : d3.format(',.0f')(x));
+    if (unit === 'ton') return d3.format(',.1f')(x) + ' T';
+    return (short && Math.abs(x) >= 10000 ? compact.format(x) : d3.format(',.0f')(x)) + ' cases';
+  };
+  const fmtNum = (x) => d3.format(',.0f')(x);
+  const totalsRow = () => {
+    const t = dash.data('totals');
+    return t.status === 'ok' ? t.data.find((r) => r.brand === brandOf()) : null;
+  };
+  const viewRows = () => {
+    const d = dash.data('sku_view');
+    if (d.status !== 'ok') return null;
+    return d.data.filter((r) => brandOf() === 'All' || r.brand === brandOf());
+  };
+
+  // controls (HTML text is fixed; scripts only set state)
+  document.querySelectorAll('.st-unit').forEach((b) => b.addEventListener('click', () => dash.setParams({ unit: b.dataset.unit })));
+  document.querySelectorAll('.st-brand').forEach((s) => s.addEventListener('change', () => dash.setParams({ brand: s.value })));
+  document.querySelectorAll('.st-basis').forEach((s) => s.addEventListener('change', () => dash.setParams({ basis: s.value })));
+  document.querySelectorAll('.st-status').forEach((s) => s.addEventListener('change', () => dash.setParams({ status: s.value })));
+  document.querySelectorAll('.st-channel').forEach((s) => s.addEventListener('change', () => dash.setParams({ channel: s.value, customer: 'All' })));
+  document.querySelectorAll('.st-customer').forEach((s) => s.addEventListener('change', () => dash.setParams(s.value === 'All' ? { customer: 'All' } : { channel: 'KA', customer: s.value })));
+  document.querySelectorAll('.st-ch-search').forEach((s) => s.addEventListener('input', () => { window.stState.cq = s.value.trim().toLowerCase(); dash.draw('chsku-body'); }));
+  const pickRow = (sel, f) => document.querySelectorAll(sel).forEach((t) => t.addEventListener('click', (e) => {
+    const tr = e.target.closest('tr[data-key]'); if (!tr) return;
+    dash.setParams(f(tr.dataset.key.split('|')[2]));
+    document.querySelectorAll('#channel-skus').forEach((x) => x.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }));
+  pickRow('.st-ch-table', (name) => ({ channel: name, customer: 'All' }));
+  pickRow('.st-cu-table', (name) => ({ channel: 'KA', customer: name }));
+  document.querySelectorAll('.st-search').forEach((s) => s.addEventListener('input', () => { window.stState.q = s.value.trim().toLowerCase(); dash.draw('sku-body'); }));
+  document.querySelectorAll('.st-th').forEach((b) => b.addEventListener('click', () => {
+    const st = window.stState, k = b.dataset.sort;
+    st.dir = st.sort === k ? -st.dir : (k === 'sku' || k === 'brand' || k === 'status' ? 1 : -1);
+    if (k === 'gap' && st.sort !== k) st.dir = 1;
+    st.sort = k;
+    document.querySelectorAll('.st-th').forEach((o) => o.closest('th') && o.closest('th').setAttribute('aria-sort', o.dataset.sort === k ? (st.dir > 0 ? 'ascending' : 'descending') : 'none'));
+    dash.draw('sku-body');
+  }));
+  dash.onData(() => {
+    const u = unitOf();
+    document.querySelectorAll('.st-unit').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.unit === u)));
+    const bs = basisOf();
+    document.querySelectorAll('.st-table').forEach((t) => { ['sar', 'uos', 'ton'].forEach((x) => t.classList.toggle('u-' + x, u === x)); ['cur', 'cif', 'dplc', 'bptt'].forEach((b) => t.classList.toggle('b-' + b, b === bs)); });
+    document.querySelectorAll('.st-basis').forEach((s) => { s.value = bs; s.disabled = u !== 'sar'; });
+    document.querySelectorAll('.st-brand').forEach((s) => { s.value = brandOf(); });
+    document.querySelectorAll('.st-status').forEach((s) => { s.value = dash.params().status || 'All'; });
+    document.querySelectorAll('.st-channel').forEach((s) => { s.value = dash.params().channel || 'All'; });
+    const chOn = (dash.params().channel || 'All') !== 'All' || (dash.params().customer || 'All') !== 'All';
+    document.querySelectorAll('.st-ch-only').forEach((x) => { x.hidden = !chOn; });
+    document.querySelectorAll('.st-all-only').forEach((x) => { x.hidden = chOn; });
+    document.querySelectorAll('.st-customer').forEach((s) => { s.value = dash.params().customer || 'All'; s.disabled = !['All', 'KA'].includes(dash.params().channel || 'All'); });
+  });
+
+  // takeaway
+  const setMark = (el, field) => { el.dataset.source = 'totals'; el.dataset.field = field; el.dataset.where = 'brand=' + encodeURIComponent(brandOf()); };
+  const drawTotal = (name, field, fmt) => dash.draw(name, (el) => {
+    const r = totalsRow();
+    const f = typeof field === 'function' ? field() : field;
+    setMark(el, f);
+    el.textContent = r ? fmt(r[f]) : '—';
+  });
+  drawTotal('tk-short', 'n_short', fmtNum);
+  drawTotal('tk-n', 'skus', fmtNum);
+  drawTotal('tk-focus', 'n_focus', fmtNum);
+  drawTotal('tk-gap', () => 'gap_' + sfx(), (x) => fmtUnit(Math.abs(x), unitOf(), true));
+  drawTotal('tk-excess', () => 'excess_' + sfx(), (x) => fmtUnit(x, unitOf(), true));
+  dash.draw('kpi-ach', (el) => {
+    const pick = chPick();
+    if (pick) {
+      const t = dash.data('channel_totals'), key = brandOf() + '|' + pick.level + '|' + pick.name;
+      const r = t.status === 'ok' ? t.data.find((x) => x.row_key === key) : null;
+      el.dataset.source = 'channel_totals'; el.dataset.field = 'achievement'; el.dataset.where = 'row_key=' + encodeURIComponent(key);
+      el.textContent = r ? d3.format('.1%')(r.achievement) : '—';
+      return;
+    }
+    const r = totalsRow();
+    setMark(el, 'achievement');
+    el.textContent = r ? d3.format('.1%')(r.achievement) : '—';
+  });
+
+  dash.draw('kpi', (el) => {
+    const m = el.dataset.metric, f = m + '_' + sfx(), pick = chPick();
+    if (pick && m === 'target') {
+      const t = dash.data('channel_totals');
+      const key = brandOf() + '|' + pick.level + '|' + pick.name;
+      const r = t.status === 'ok' ? t.data.find((x) => x.row_key === key) : null;
+      el.dataset.source = 'channel_totals'; el.dataset.field = f; el.dataset.where = 'row_key=' + encodeURIComponent(key);
+      el.textContent = r ? fmtUnit(r[f], unitOf(), true) : '—';
+      return;
+    }
+    if (pick && m === 'sales') {
+      const t = dash.data('channel_totals');
+      const key = brandOf() + '|' + pick.level + '|' + pick.name;
+      const r = t.status === 'ok' ? t.data.find((x) => x.row_key === key) : null;
+      el.dataset.source = 'channel_totals'; el.dataset.field = f; el.dataset.where = 'row_key=' + encodeURIComponent(key);
+      el.textContent = r ? fmtUnit(r[f], unitOf(), true) : '—';
+      return;
+    }
+    const r = totalsRow();
+    setMark(el, f);
+    el.textContent = r ? fmtUnit(r[f], unitOf(), true) : '—';
+  });
+
+  // bar lists
+  const drawBars = (el, key, color) => {
+    const rows = viewRows();
+    if (!rows) { el.textContent = '—'; return; }
+    const u = unitOf(), k = u === 'sar' ? key + '_' + basisOf() : u === 'ton' ? key + '_ton' : key;
+    const top = rows.filter((r) => Math.abs(r[k]) > 0.5).sort((a, b) => Math.abs(b[k]) - Math.abs(a[k])).slice(0, 12);
+    el.replaceChildren();
+    if (!top.length) {
+      const p = document.createElement('div'); p.className = 'st-empty'; p.textContent = 'None for this brand.'; el.append(p); return;
+    }
+    const max = d3.max(top, (r) => Math.abs(r[k]));
+    top.forEach((r) => {
+      const row = document.createElement('div'); row.className = 'st-bar-row'; row.title = r.sku;
+      const n = document.createElement('div'); n.className = 'st-bar-name'; n.textContent = r.sku;
+      const tr = document.createElement('div'); tr.className = 'st-bar-track';
+      const f = document.createElement('div'); f.className = 'st-bar-fill'; f.style.width = (Math.abs(r[k]) / max * 100) + '%'; f.style.background = color;
+      tr.append(f);
+      const v = document.createElement('div'); v.className = 'st-bar-val'; v.textContent = fmtUnit(r[k], u, true);
+      row.append(n, tr, v); el.append(row);
+    });
+  };
+  dash.draw('bars-gap', (el) => drawBars(el, 'gap', 'var(--cds-chart-status-critical)'));
+  dash.draw('bars-excess', (el) => drawBars(el, 'excess', dash.colors[2] || dash.colors[0]));
+
+  // brand table
+  const cell = (tr, text, cls) => { const td = document.createElement('td'); if (cls) td.className = cls; td.textContent = text; tr.append(td); return td; };
+  dash.draw('brand-body', (el) => {
+    const t = dash.data('totals');
+    el.replaceChildren();
+    if (t.status !== 'ok') return;
+    t.data.forEach((r) => {
+      const tr = document.createElement('tr');
+      cell(tr, r.brand); cell(tr, fmtNum(r.skus)); cell(tr, fmtNum(r.n_short)); cell(tr, fmtNum(r.n_focus));
+      ['target', 'sales', 'avail', 'gap', 'excess', 'net'].forEach((m) => {
+        ['cur', 'cif', 'dplc', 'bptt', 'uos', 'ton'].forEach((u) => {
+          const x = r[m + '_' + u];
+          cell(tr, u === 'ton' ? d3.format(',.1f')(x) : fmtNum(x), (u === 'uos' || u === 'ton' ? 'c-' + u : 'c-sar b-' + u) + (m === 'gap' && x < -0.5 ? ' st-neg' : m === 'excess' && x > 0.5 ? ' st-pos' : ''));
+        });
+      });
+      el.append(tr);
+    });
+  });
+
+  // SKU table
+  const pillClass = { 'Shortage': 's-bad', 'Excess – focus': 's-warn', 'On target': 's-ok', 'No stock SKU': 's-muted' };
+  // channel tables
+  const unitCls = (u) => (u === 'uos' || u === 'ton' ? 'c-' + u : 'c-sar b-' + u);
+  const fmtCell = (u, x) => (u === 'ton' ? d3.format(',.1f')(x) : fmtNum(x));
+  const drawChTable = (el, level) => {
+    const t = dash.data('channel_totals');
+    el.replaceChildren();
+    if (t.status !== 'ok') return;
+    t.data.filter((r) => r.brand === brandOf() && r.level === level && !(r.name === 'Unallocated' && r.target_uos < 0.0001)).forEach((r) => {
+      const tr = document.createElement('tr'); tr.dataset.key = r.row_key; tr.style.cursor = 'pointer';
+      cell(tr, r.name); cell(tr, fmtNum(r.skus));
+      UNITS.forEach((u) => cell(tr, fmtCell(u, r['target_' + u]), unitCls(u)));
+      UNITS.forEach((u) => cell(tr, fmtCell(u, r['sales_' + u]), unitCls(u)));
+      cell(tr, d3.format('.1%')(r.achievement));
+      UNITS.forEach((u) => cell(tr, d3.format('.1%')(r['share_' + u]), unitCls(u)));
+      el.append(tr);
+    });
+  };
+  dash.draw('ch-body', (el) => drawChTable(el, 'channel'));
+  dash.draw('cu-body', (el) => drawChTable(el, 'customer'));
+  dash.draw('chsku-body', (el) => {
+    const d = dash.data('channel_view');
+    el.replaceChildren();
+    if (d.status !== 'ok') return;
+    const ch = dash.params().channel || 'All', cu = dash.params().customer || 'All', q = window.stState.cq;
+    const k = 'target_' + (unitOf() === 'sar' ? basisOf() : unitOf());
+    d.data
+      .filter((r) => (brandOf() === 'All' || r.brand === brandOf()) && (ch === 'All' || r.channel === ch) && (cu === 'All' || r.customer === cu) && (!q || r.sku.toLowerCase().includes(q)))
+      .sort((a, b) => b[k] - a[k])
+      .forEach((r) => {
+        const tr = document.createElement('tr'); tr.dataset.key = r.key;
+        cell(tr, r.sku); cell(tr, r.channel, 't-txt'); cell(tr, r.customer || '–', 't-txt');
+        UNITS.forEach((u) => cell(tr, fmtCell(u, r['target_' + u]), unitCls(u)));
+        UNITS.forEach((u) => cell(tr, fmtCell(u, r['sales_' + u]), unitCls(u)));
+        cell(tr, r.achievement == null ? '–' : d3.format('.0%')(r.achievement));
+        cell(tr, r.share_of_sku == null ? '–' : d3.format('.0%')(r.share_of_sku));
+        UNITS.forEach((u) => cell(tr, fmtCell(u, r['avail_' + u]), unitCls(u)));
+        const td = cell(tr, '', 't-txt'); const p = document.createElement('span'); p.className = 'st-pill ' + (pillClass[r.status] || ''); p.textContent = r.status; td.append(p);
+        el.append(tr);
+      });
+  });
+  const sortKey = { sku: 'sku', brand: 'brand', status: 'status', target: 'nov_target', sales: 'nov_sales', avail: 'available', gap: 'gap', excess: 'excess', cover: 'cover' };
+  dash.draw('sku-body', (el) => {
+    const rows = viewRows();
+    el.replaceChildren();
+    if (!rows) return;
+    const st = window.stState, status = dash.params().status || 'All';
+    let k = sortKey[st.sort];
+    if (unitOf() === 'sar' && ['nov_target', 'nov_sales', 'available', 'gap', 'excess'].includes(k)) k = { nov_target: 'target', nov_sales: 'sales', available: 'avail', gap: 'gap', excess: 'excess' }[k] + '_' + basisOf();
+    if (unitOf() === 'ton' && ['nov_target', 'nov_sales', 'available', 'gap', 'excess'].includes(k)) k = { nov_target: 'target', nov_sales: 'sales', available: 'avail', gap: 'gap', excess: 'excess' }[k] + '_ton';
+    const list = rows
+      .filter((r) => status === 'All' || r.status === status)
+      .filter((r) => !st.q || r.sku.toLowerCase().includes(st.q) || r.stock_sku.toLowerCase().includes(st.q))
+      .sort((a, b) => {
+        const x = a[k], y = b[k];
+        if (typeof x === 'string') return st.dir * x.localeCompare(y);
+        return st.dir * ((x ?? -Infinity) - (y ?? -Infinity));
+      });
+    list.forEach((r) => {
+      const tr = document.createElement('tr');
+      cell(tr, r.sku);
+      cell(tr, r.brand, 't-txt');
+      const td = cell(tr, '', 't-txt'); const p = document.createElement('span'); p.className = 'st-pill ' + (pillClass[r.status] || ''); p.textContent = r.status; td.append(p);
+      [['target', 'nov_target'], ['sales', 'nov_sales'], ['avail', 'available'], ['gap', 'gap'], ['excess', 'excess']].forEach(([s, q]) => {
+        const neg = q === 'gap' && r[q] < -0.5, pos = q === 'excess' && r[q] > 0.5;
+        const extra = neg ? ' st-neg' : pos ? ' st-pos' : '';
+        ['cur', 'cif', 'dplc', 'bptt'].forEach((b) => cell(tr, fmtNum(r[s + '_' + b]), 'c-sar b-' + b + extra));
+        cell(tr, fmtNum(r[q]), 'c-uos' + extra);
+        cell(tr, d3.format(',.1f')(r[s + '_ton']), 'c-ton' + extra);
+      });
+      cell(tr, r.cover == null ? '–' : d3.format('.0%')(r.cover));
+      el.append(tr);
+    });
+  });
+  // ---- Excel export: builds a real .xlsx (zip of SpreadsheetML) from the loaded data ----
+  (() => {
+    const crcTable = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+    const crc32 = (b) => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = crcTable[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+    const enc = new TextEncoder();
+    const zip = (files) => {
+      const parts = [], central = []; let offset = 0;
+      const d = new Date(), time = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), date = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+      files.forEach(([name, text]) => {
+        const nb = enc.encode(name), db = enc.encode(text), crc = crc32(db);
+        const h = new DataView(new ArrayBuffer(30));
+        h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+        h.setUint16(10, time, true); h.setUint16(12, date, true); h.setUint32(14, crc, true); h.setUint32(18, db.length, true); h.setUint32(22, db.length, true);
+        h.setUint16(26, nb.length, true); h.setUint16(28, 0, true);
+        parts.push(new Uint8Array(h.buffer), nb, db);
+        const c = new DataView(new ArrayBuffer(46));
+        c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true);
+        c.setUint16(12, time, true); c.setUint16(14, date, true); c.setUint32(16, crc, true); c.setUint32(20, db.length, true); c.setUint32(24, db.length, true);
+        c.setUint16(28, nb.length, true); c.setUint32(42, offset, true);
+        central.push(new Uint8Array(c.buffer), nb);
+        offset += 30 + nb.length + db.length;
+      });
+      const cdSize = central.reduce((a, p) => a + p.length, 0);
+      const e = new DataView(new ArrayBuffer(22));
+      e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, cdSize, true); e.setUint32(16, offset, true);
+      return new Blob([...parts, ...central, new Uint8Array(e.buffer)]);
+    };
+    const esc = (s) => String(s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const col = (i) => { let s = ''; i++; while (i) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; };
+    // cols: [{h, k, f}] f: 'n' number #,##0, 'p' percent, 't' text
+    const sheet = (cols, rows) => {
+      const cell = (r, c, v, style, f) => {
+        const ref = col(c) + (r + 1);
+        if (v == null || v === '') return '';
+        if (f === 't' || typeof v === 'string') return `<c r="${ref}" t="inlineStr" s="${style}"><is><t xml:space="preserve">${esc(v)}</t></is></c>`;
+        return `<c r="${ref}" s="${style}"><v>${Number.isFinite(v) ? v : 0}</v></c>`;
+      };
+      const head = `<row r="1">${cols.map((c, i) => cell(0, i, c.h, 1, 't')).join('')}</row>`;
+      const body = rows.map((r, ri) => `<row r="${ri + 2}">${cols.map((c, i) => cell(ri + 1, i, typeof c.k === 'function' ? c.k(r) : r[c.k], c.f === 'n' ? (/_ton$|^cpt$|^price_/.test(c.k) ? 4 : 2) : c.f === 'p' ? 3 : 0, c.f)).join('')}</row>`).join('');
+      const widths = cols.map((c, i) => `<col min="${i + 1}" max="${i + 1}" width="${c.w || 14}" customWidth="1"/>`).join('');
+      return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>${widths}</cols><sheetData>${head}${body}</sheetData><autoFilter ref="A1:${col(cols.length - 1)}${rows.length + 1}"/></worksheet>`;
+    };
+    const workbook = (sheets) => {
+      const files = [
+        ['[Content_Types].xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${sheets.map((s, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}</Types>`],
+        ['_rels/.rels', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`],
+        ['xl/workbook.xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${sheets.map((s, i) => `<sheet name="${esc(s.name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets>${sheets.map((s, i) => `<definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="${i}" hidden="1">'${esc(s.name)}'!$A$1:$${col(s.cols.length - 1)}$${s.rows.length + 1}</definedName></definedNames>`).slice(0, 0).join('')}</workbook>`],
+        ['xl/_rels/workbook.xml.rels', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((s, i) => `<Relationship Id="rId${i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join('')}<Relationship Id="rId${sheets.length + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`],
+        ['xl/styles.xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="164" formatCode="#,##0.0"/></numFmts><fonts count="2"><font><sz val="10"/><name val="Arial"/></font><font><b/><sz val="10"/><color rgb="FFFFFFFF"/><name val="Arial"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF1F4E78"/></patternFill></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="5"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="3" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="9" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`],
+      ];
+      sheets.forEach((s, i) => files.push([`xl/worksheets/sheet${i + 1}.xml`, sheet(s.cols, s.rows)]));
+      return zip(files);
+    };
+    const skuCols = [
+      { h: 'SKU (target description)', k: 'sku', f: 't', w: 44 }, { h: 'Stock SKU', k: 'stock_sku', f: 't', w: 44 }, { h: 'Brand', k: 'brand', f: 't', w: 12 }, { h: 'Status', k: 'status', f: 't', w: 16 },
+      { h: 'Nov Opening SOH (UOS)', k: 'nov_opening', f: 'n' }, { h: 'Nov Released (UOS)', k: 'nov_released', f: 'n' }, { h: 'Nov Sales MTD (UOS)', k: 'nov_sales', f: 'n' },
+      { h: 'Available Stock (UOS)', k: 'available', f: 'n' }, { h: 'Nov Target (UOS)', k: 'nov_target', f: 'n' }, { h: 'Remaining Target (UOS)', k: 'remaining_target', f: 'n' },
+      { h: 'Gap - shortage only (UOS)', k: 'gap', f: 'n' }, { h: 'Excess (UOS)', k: 'excess', f: 'n' }, { h: 'Net Gap (UOS)', k: 'net', f: 'n' }, { h: 'Cover %', k: 'cover', f: 'p' },
+      { h: 'Cases per ton (CPT)', k: 'cpt', f: 'n' }, { h: 'Available (Tons)', k: 'avail_ton', f: 'n' }, { h: 'Target (Tons)', k: 'target_ton', f: 'n' }, { h: 'Sales MTD (Tons)', k: 'sales_ton', f: 'n' },
+      { h: 'Gap (Tons)', k: 'gap_ton', f: 'n' }, { h: 'Excess (Tons)', k: 'excess_ton', f: 'n' }, { h: 'Net Gap (Tons)', k: 'net_ton', f: 'n' },
+      ...[['cur', 'Current'], ['cif', 'CIF'], ['dplc', 'DPLC'], ['bptt', 'BPTT']].flatMap(([b, n]) => [
+        { h: `${n} value / case`, k: 'price_' + b, f: 'n' }, { h: `Target (SAR ${n})`, k: 'target_' + b, f: 'n' }, { h: `Sales MTD (SAR ${n})`, k: 'sales_' + b, f: 'n' },
+        { h: `Available (SAR ${n})`, k: 'avail_' + b, f: 'n' }, { h: `Gap (SAR ${n})`, k: 'gap_' + b, f: 'n' }, { h: `Excess (SAR ${n})`, k: 'excess_' + b, f: 'n' }, { h: `Net Gap (SAR ${n})`, k: 'net_' + b, f: 'n' }]),
+    ];
+    const brandCols = [
+      { h: 'Brand', k: 'brand', f: 't', w: 14 }, { h: 'SKUs with target', k: 'skus', f: 'n' }, { h: 'SKUs short', k: 'n_short', f: 'n' }, { h: 'SKUs excess - focus', k: 'n_focus', f: 'n' },
+      { h: 'Target (UOS)', k: 'target_uos', f: 'n' }, { h: 'Sales MTD (UOS)', k: 'sales_uos', f: 'n' }, { h: 'Achievement %', k: 'achievement', f: 'p' }, { h: 'Available (UOS)', k: 'avail_uos', f: 'n' },
+      { h: 'Gap (UOS)', k: 'gap_uos', f: 'n' }, { h: 'Excess (UOS)', k: 'excess_uos', f: 'n' }, { h: 'Net Gap (UOS)', k: 'net_uos', f: 'n' },
+      ...['target', 'sales', 'avail', 'gap', 'excess', 'net'].map((m) => ({ h: `${{ target: 'Target', sales: 'Sales MTD', avail: 'Available', gap: 'Gap', excess: 'Excess', net: 'Net Gap' }[m]} (Tons)`, k: m + '_ton', f: 'n' })),
+      ...[['cur', 'Current'], ['cif', 'CIF'], ['dplc', 'DPLC'], ['bptt', 'BPTT']].flatMap(([b, n]) => ['target', 'sales', 'avail', 'gap', 'excess', 'net'].map((m) =>
+        ({ h: `${{ target: 'Target', sales: 'Sales MTD', avail: 'Available', gap: 'Gap', excess: 'Excess', net: 'Net Gap' }[m]} (SAR ${n})`, k: m + '_' + b, f: 'n' }))),
+    ];
+    const UL = [['uos', 'cases'], ['ton', 'Tons'], ['cur', 'SAR Current'], ['cif', 'SAR CIF'], ['dplc', 'SAR DPLC'], ['bptt', 'SAR BPTT']];
+    const chCols = [{ h: 'Brand', k: 'brand', f: 't', w: 12 }, { h: 'Channel / customer', k: 'name', f: 't', w: 18 }, { h: 'SKUs', k: 'skus', f: 'n' },
+      ...UL.map(([u, n]) => ({ h: `Target (${n})`, k: 'target_' + u, f: 'n' })), ...UL.map(([u, n]) => ({ h: `Sales MTD (${n})`, k: 'sales_' + u, f: 'n' })), { h: 'Achievement %', k: 'achievement', f: 'p' },
+      ...UL.map(([u, n]) => ({ h: `Share (${n})`, k: 'share_' + u, f: 'p' }))];
+    const chSkuCols = [{ h: 'Channel', k: 'channel', f: 't', w: 12 }, { h: 'Customer', k: 'customer', f: 't', w: 12 }, { h: 'SKU', k: 'sku', f: 't', w: 44 }, { h: 'Brand', k: 'brand', f: 't', w: 12 },
+      ...UL.map(([u, n]) => ({ h: `Channel target (${n})`, k: 'target_' + u, f: 'n' })), ...UL.map(([u, n]) => ({ h: `Channel sales MTD (${n})`, k: 'sales_' + u, f: 'n' })), { h: 'Achievement %', k: 'achievement', f: 'p' }, { h: 'Share of SKU target', k: 'share_of_sku', f: 'p' },
+      ...UL.map(([u, n]) => ({ h: `SKU available (${n})`, k: 'avail_' + u, f: 'n' })), { h: 'SKU status', k: 'status', f: 't', w: 16 }];
+    const show = (cls) => document.querySelectorAll('.st-dl-msg').forEach((m) => { m.hidden = !m.classList.contains(cls); });
+    document.querySelectorAll('.st-dl').forEach((btn) => btn.addEventListener('click', async () => {
+      const v = dash.data('sku_view'), t = dash.data('totals'), chv = dash.data('channel_view'), cht = dash.data('channel_totals');
+      if (v.status !== 'ok' || t.status !== 'ok') { show('st-dl-error'); return; }
+      btn.disabled = true;
+      try {
+        const order = { 'Shortage': 0, 'Excess – focus': 1, 'On target': 2, 'No stock SKU': 3 };
+        const skuRows = v.data.slice().sort((a, b) => (order[a.status] - order[b.status]) || (a.gap - b.gap) || (b.excess - a.excess));
+        const blob = workbook([
+          { name: 'SKU detail', cols: skuCols, rows: skuRows },
+          { name: 'By brand', cols: brandCols, rows: t.data },
+          { name: 'Shortages', cols: skuCols, rows: skuRows.filter((r) => r.gap < -0.5) },
+          { name: 'Excess focus', cols: skuCols, rows: skuRows.filter((r) => r.excess > 0.5).sort((a, b) => b.excess_cur - a.excess_cur) },
+          ...(chv.status === 'ok' && cht.status === 'ok' ? [{ name: 'Target by channel', cols: chCols, rows: cht.data.filter((r) => r.level === 'channel') }, { name: 'KA by customer', cols: chCols, rows: cht.data.filter((r) => r.level === 'customer') }, { name: 'Channel target by SKU', cols: chSkuCols, rows: chv.data.slice().sort((a, b) => a.channel.localeCompare(b.channel) || a.customer.localeCompare(b.customer) || b.target_uos - a.target_uos) }] : []),
+        ]);
+        const filename = `Nov_Stock_Gap_${new Date().toISOString().slice(0, 10)}.xlsx`;
+        let downloads = null;
+        try { downloads = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (e) { downloads = null; }
+        if (!downloads) {
+          // Shared-link view: the platform save isn't offered here, so hand the browser the file directly.
+          const url = URL.createObjectURL(new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+          const a = document.createElement('a');
+          a.href = url; a.download = filename; a.rel = 'noopener';
+          a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 60000);
+          show('st-dl-direct');
+          return;
+        }
+        await downloads.save({ filename, data: blob });
+        show('st-dl-saved');
+      } catch (e) {
+        const code = e && e.code;
+        show(code === 'declined' ? 'st-dl-declined' : (code === 'unavailable' || code === 'not_granted' || code === 'capability_disabled' || code === 'capability_removed' || code === 'extension_not_enabled') ? 'st-dl-none' : 'st-dl-error');
+      } finally { btn.disabled = false; }
+    }));
+  })();
+</script>
+
+</div>
+<script>dash._run();</script>
+</body>
+</html>
